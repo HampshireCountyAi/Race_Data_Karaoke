@@ -1,4 +1,3 @@
-```markdown
 # Race Data Karaoke
 
 Transform motorsport telemetry into entertaining party experiences!
