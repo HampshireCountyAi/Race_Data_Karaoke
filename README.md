@@ -1,6 +1,6 @@
 # Race Data Karaoke
 
-Transform motorsport telemetry into entertaining party experiences!
+Transform motorsport data into entertaining party experiences for true racing fans!
 
 ## Overview
 
