@@ -24,8 +24,6 @@ Race Data Karaoke is an interactive platform that turns racing data into stunnin
 - Dramatic Storyteller — Over-the-top theatrical narration
 - Technical Expert — Deep data analysis and insights
 
-✨ **Wildcard Challenge Mode** — Get creative! Push the AI to add neon colors, fantasy themes, cooking show vibes, or anything else you can imagine.
-
 📁 **Custom Data Support** — Start with demo data from the 2024 Toyota GR Cup at Barber Motorsports Park, or upload your own race .tar file.
 
 ## Getting Started
