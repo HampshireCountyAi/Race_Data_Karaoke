@@ -1,0 +1,3009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Race Data Karaoke - Toyota Hack the Track</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght:400;600;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #eb0a1e;
+            --secondary: #1a1a1a;
+            --accent: #00d4ff;
+            --bg-dark: #0a0a0a;
+            --text-light: #ffffff;
+            --surface-dark: #1a1a1a;
+            --border-dark: #333333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: radial-gradient(ellipse at top, #1a1a1a 0%, #0a0a0a 50%, #000000 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 212, 255, 0.03) 0px,
+                transparent 1px,
+                transparent 2px,
+                rgba(0, 212, 255, 0.03) 3px
+            );
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, #c70000 50%, #8b0000 100%);
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(235, 10, 30, 0.4),
+                        0 0 0 1px rgba(255,255,255,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            to { left: 100%; }
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.8rem, 5vw, 3.2rem);
+            font-weight: 900;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #ffffff;
+            text-shadow: 0 0 20px rgba(255,255,255,0.5),
+                         0 4px 8px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 1;
+        }
+
+        header h1 {
+            color: #ffffff;
+        }
+
+        .subtitle {
+            font-size: clamp(0.9rem, 2vw, 1.2rem);
+            margin-top: 10px;
+            opacity: 0.95;
+            font-weight: 400;
+            letter-spacing: 2px;
+        }
+
+        .demo-badge {
+            display: inline-block;
+            background: rgba(0, 212, 255, 0.3);
+            color: var(--accent);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-left: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: 1px solid var(--accent);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+
+        .controls-panel {
+            background: rgba(26, 26, 26, 0.95);
+            border: 2px solid rgba(235, 10, 30, 0.5);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
+                        0 0 0 1px rgba(255,255,255,0.05);
+        }
+
+        .control-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent);
+        }
+
+        select {
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 12px;
+            color: var(--text-light);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(235, 10, 30, 0.2);
+        }
+
+        select option {
+            background: #0a0a0a;
+            color: var(--text-light);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        button {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 600;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        button span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 16px rgba(235, 10, 30, 0.4);
+        }
+
+        .btn-primary:hover {
+            background: #c70000;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(235, 10, 30, 0.6);
+        }
+
+        .btn-primary:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: #333;
+            color: white;
+            border: 1px solid #555;
+        }
+
+        .btn-secondary:hover {
+            background: #444;
+            border-color: var(--accent);
+        }
+
+        .btn-wildcard {
+            background: linear-gradient(135deg, #ff00ff, #00d4ff);
+            color: white;
+            box-shadow: 0 4px 16px rgba(255, 0, 255, 0.4);
+        }
+
+        .btn-wildcard:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 0, 255, 0.6);
+        }
+
+        .visualization-area {
+            background: rgba(10, 10, 10, 0.9);
+            border: 2px solid rgba(235, 10, 30, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            min-height: 450px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        #visualizationCanvas {
+            width: 100%;
+            height: 450px;
+            border-radius: 8px;
+        }
+
+        .commentary-panel {
+            background: rgba(26, 26, 26, 0.95);
+            border: 2px solid rgba(0, 212, 255, 0.5);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 212, 255, 0.2),
+                        0 0 0 1px rgba(255,255,255,0.05);
+        }
+
+        .commentary-header {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .commentary-text {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: var(--text-light);
+            min-height: 120px;
+            font-weight: 400;
+        }
+
+        .commentary-text.active {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .playback-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(10, 10, 10, 0.9);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            flex-wrap: wrap;
+        }
+
+        .progress-bar {
+            flex: 1;
+            min-width: 200px;
+            height: 8px;
+            background: #333;
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: progressShine 2s infinite;
+        }
+
+        @keyframes progressShine {
+            to { transform: translateX(100%); }
+        }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="range"] {
+            width: 120px;
+            height: 6px;
+            padding: 0;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #333;
+            border-radius: 3px;
+            border: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(235, 10, 30, 0.4);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 8px rgba(235, 10, 30, 0.4);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+            border: 2px solid var(--accent);
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 700px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 16px 64px rgba(0, 212, 255, 0.3);
+            position: relative;
+        }
+
+        .modal-header {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .chat-area {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            min-height: 250px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .chat-message {
+            margin-bottom: 15px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .chat-message.user {
+            background: rgba(235, 10, 30, 0.2);
+            border-left: 3px solid var(--primary);
+            margin-left: 20px;
+        }
+
+        .chat-message.ai {
+            background: rgba(0, 212, 255, 0.2);
+            border-left: 3px solid var(--accent);
+            margin-right: 20px;
+        }
+
+        .chat-message .sender {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            opacity: 0.8;
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: var(--text-light);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 16px;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.2);
+        }
+
+        .quick-suggestions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .suggestion-btn {
+            font-size: 0.85rem;
+            padding: 8px 16px;
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+        }
+
+        .suggestion-btn:hover {
+            background: rgba(0, 212, 255, 0.2);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .status-badge.playing {
+            background: rgba(0, 255, 0, 0.2);
+            color: #00ff00;
+            border: 1px solid #00ff00;
+        }
+
+        .status-badge.paused {
+            background: rgba(255, 165, 0, 0.2);
+            color: #ffa500;
+            border: 1px solid #ffa500;
+        }
+
+        .status-badge.loading {
+            background: rgba(0, 212, 255, 0.2);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Splash Screen Styles */
+        .splash-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at top, #1a1a1a 0%, #0a0a0a 50%, #000000 100%);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .splash-screen.active {
+            display: flex;
+        }
+
+        .splash-content {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+            border: 3px solid var(--primary);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 80px rgba(235, 10, 30, 0.5),
+                        0 0 0 1px rgba(255,255,255,0.1);
+            position: relative;
+            animation: splashFadeIn 0.5s ease-out;
+        }
+
+        /* Scrollbar styling for splash content */
+        .splash-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .splash-content::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+        }
+
+        .splash-content::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        .splash-content::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+        }
+
+        @keyframes splashFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .splash-logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .splash-logo h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.8rem, 5vw, 3rem);
+            font-weight: 900;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .splash-tagline {
+            font-size: 1.1rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .splash-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #cccccc;
+            margin-bottom: 20px;
+        }
+
+        .splash-description strong {
+            color: var(--accent);
+        }
+
+        .how-to-play {
+            background: rgba(235, 10, 30, 0.1);
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            margin: 18px 0;
+            border-radius: 8px;
+        }
+
+        .how-to-play h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .how-to-play ol {
+            margin-left: 20px;
+            line-height: 1.6;
+        }
+
+        .how-to-play li {
+            margin-bottom: 6px;
+            color: #dddddd;
+        }
+
+        .upload-info {
+            background: rgba(0, 212, 255, 0.1);
+            border-left: 4px solid var(--accent);
+            padding: 15px;
+            margin: 18px 0;
+            border-radius: 8px;
+        }
+
+        .upload-info h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent);
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .upload-info ul {
+            margin-left: 20px;
+            line-height: 1.6;
+        }
+
+        .upload-info li {
+            margin-bottom: 6px;
+            color: #dddddd;
+        }
+
+        .splash-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .splash-actions button {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .btn-upload {
+            background: linear-gradient(135deg, #333, #555);
+            color: white;
+            border: 2px solid var(--accent);
+        }
+
+        .btn-upload:hover {
+            background: linear-gradient(135deg, #444, #666);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .help-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(235, 10, 30, 0.5);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .help-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(235, 10, 30, 0.7);
+        }
+
+        .data-source-indicator {
+            display: inline-block;
+            background: rgba(0, 212, 255, 0.2);
+            color: var(--accent);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-left: 15px;
+            border: 1px solid var(--accent);
+        }
+
+        .upload-button-controls {
+            margin-top: 10px;
+        }
+
+        /* Educational Preview Styles */
+        .preview-section {
+            background: rgba(0, 212, 255, 0.05);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .preview-section h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent);
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .preview-section p {
+            line-height: 1.8;
+            color: #dddddd;
+            margin-bottom: 15px;
+        }
+
+        .key-features {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .key-features ul {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+
+        .key-features li {
+            margin-bottom: 8px;
+            color: #cccccc;
+        }
+
+        .key-features li strong {
+            color: var(--accent);
+        }
+
+        .script-preview {
+            background: rgba(235, 10, 30, 0.1);
+            border-left: 4px solid var(--primary);
+            padding: 20px;
+            margin-top: 15px;
+            border-radius: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .script-preview h4 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary);
+            font-size: 1rem;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .script-segment {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--accent);
+        }
+
+        .script-segment-number {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent);
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .script-segment-text {
+            color: #ffffff;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .preview-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn-learn {
+            background: linear-gradient(135deg, #ff00ff, #00d4ff);
+            color: white;
+            box-shadow: 0 4px 16px rgba(255, 0, 255, 0.3);
+            position: relative;
+        }
+
+        .btn-learn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 0, 255, 0.5);
+        }
+
+        body.learning-active .btn-learn::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 12px;
+            height: 12px;
+            background: #00ff00;
+            border-radius: 50%;
+            border: 2px solid var(--bg-dark);
+            animation: pulse 2s infinite;
+        }
+
+        /* Learning Mode Side Panel Styles */
+        .learning-panel {
+            position: fixed;
+            top: 0;
+            right: -450px;
+            width: 450px;
+            height: 100vh;
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+            border-left: 2px solid var(--accent);
+            box-shadow: -8px 0 32px rgba(0, 0, 0, 0.8);
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1500;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .learning-panel.active {
+            right: 0;
+        }
+
+        .learning-panel-header {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 212, 255, 0.1));
+            border-bottom: 2px solid var(--accent);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .learning-panel-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .close-panel-btn {
+            background: transparent;
+            border: none;
+            color: var(--accent);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .close-panel-btn:hover {
+            background: rgba(0, 212, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        .learning-panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .learning-intro {
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            flex-shrink: 0;
+        }
+
+        .learning-intro p {
+            margin: 0;
+            line-height: 1.6;
+            color: #cccccc;
+            font-size: 0.9rem;
+        }
+
+        .learning-chat-container {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            overflow-y: auto;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .learning-panel-footer {
+            padding: 20px;
+            border-top: 1px solid #333;
+            background: rgba(0, 0, 0, 0.5);
+            flex-shrink: 0;
+        }
+
+        .learning-panel .quick-suggestions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .learning-panel .suggestion-btn {
+            font-size: 0.75rem;
+            padding: 6px 12px;
+        }
+
+        .learning-panel .chat-input-area {
+            margin-bottom: 0;
+        }
+
+        .chat-message p {
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .chat-message.loading {
+            opacity: 0.7;
+        }
+
+        .chat-message .typing-indicator {
+            display: inline-block;
+            animation: typingBlink 1.4s infinite;
+        }
+
+        @keyframes typingBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Main content area adjustment when panel is open */
+        body.learning-active .container {
+            margin-right: 450px;
+            transition: margin-right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Mobile: Keep as full-screen modal */
+        @media (max-width: 768px) {
+            .learning-panel {
+                right: -100%;
+                width: 100%;
+            }
+
+            .learning-panel.active {
+                right: 0;
+            }
+
+            body.learning-active .container {
+                margin-right: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            header {
+                padding: 25px 15px;
+            }
+
+            .controls-panel {
+                padding: 15px;
+            }
+
+            .control-row {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            .modal-content {
+                padding: 20px;
+            }
+
+            .quick-suggestions {
+                flex-direction: column;
+            }
+
+            .suggestion-btn {
+                width: 100%;
+            }
+
+            .splash-content {
+                padding: 25px;
+            }
+
+            .splash-actions {
+                flex-direction: column;
+            }
+
+            .splash-actions button {
+                width: 100%;
+            }
+
+            .help-button {
+                bottom: 20px;
+                right: 20px;
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Splash Screen -->
+    <div class="splash-screen active" id="splashScreen">
+        <div class="splash-content">
+            <div class="splash-logo">
+                <h1>🏁 RACE DATA KARAOKE</h1>
+                <p class="splash-tagline">The Ultimate Party Game for Race Fans</p>
+            </div>
+
+            <p class="splash-description">
+                Transform race telemetry into <strong>entertainment</strong>! Race Data Karaoke turns real-world racing data into wild visualizations paired with AI-generated commentary. Your mission: perform the commentary like a race announcer while the visualization plays on the big screen.
+            </p>
+
+            <div class="how-to-play">
+                <h3>🎮 How to Play</h3>
+                <ol>
+                    <li><strong>Pick a Visualization:</strong> Choose from sector heatmaps, speed hierarchies, weather impacts, and more</li>
+                    <li><strong>Select Commentary Style:</strong> Professional announcer, comedian, dramatic storyteller, or technical expert</li>
+                    <li><strong>Generate Experience:</strong> AI creates custom commentary synced to your visualization - you'll see a preview first!</li>
+                    <li><strong>Learn First:</strong> Review plain language explanations of what the visualization shows before starting</li>
+                    <li><strong>Perform:</strong> Read the commentary out loud like a race announcer while the visualization plays!</li>
+                    <li><strong>Get Creative:</strong> Use Wildcard Challenge to add unicorns, cooking show vibes, or medieval battle themes</li>
+                    <li><strong>Explore & Learn:</strong> Use Learning Mode to ask questions about the data and understand racing concepts</li>
+                </ol>
+            </div>
+
+            <div class="upload-info">
+                <h3>📁 Custom Race Data</h3>
+                <p style="margin-bottom: 15px;">Start with our demo data from <strong>Barber Motorsports Park</strong>, or upload your own race .tar file!</p>
+                <ul>
+                    <li>File must be <strong>.tar format</strong> and under <strong>50MB</strong></li>
+                    <li>If your file is too large, <strong>remove telemetry data</strong> from the archive</li>
+                    <li>App-Creator will analyze your data and generate custom visualizations</li>
+                    <li>To return to demo data, simply reload the page</li>
+                </ul>
+            </div>
+
+            <div class="splash-actions">
+                <button class="btn-primary" id="startDemoBtn"><span>🚀 Start with Demo Data</span></button>
+                <button class="btn-upload" id="uploadCustomBtn"><span>📤 Upload Custom Data</span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Button -->
+    <button class="help-button" id="helpBtn" title="Show Help">?</button>
+
+    <!-- Hidden file input for upload -->
+    <input type="file" id="fileInput" accept=".tar" style="display: none;">
+    <div class="container">
+        <header>
+            <h1>🏎️ Race Data Karaoke <span class="demo-badge">Real Race Data</span></h1>
+            <p class="subtitle">Barber Motorsports Park • Toyota GR Cup • 5 Drivers • 27 Laps</p>
+        </header>
+
+        <div class="controls-panel">
+            <div class="control-row">
+                <div class="control-group">
+                    <label for="vizSelect">🎨 Visualization Type</label>
+                    <select id="vizSelect">
+                        <option value="sector-heatmap">Sector Consistency Heatmap</option>
+                        <option value="pace-degradation">Pace Degradation Timeline</option>
+                        <option value="weather-impact">Weather Impact Analysis</option>
+                        <option value="speed-hierarchy">Speed Trap Hierarchy</option>
+                        <option value="sector-battle">Sector 1 vs Sector 3 Battle</option>
+                        <option value="flag-performance">Green Flag vs FCY Performance</option>
+                        <option value="improvement-tracker">Improvement Momentum Tracker</option>
+                        <option value="consistency-bubbles">Consistency Score Bubbles</option>
+                        <option value="random">🎲 Something New and Random</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="styleSelect">🎭 Commentary Style</label>
+                    <select id="styleSelect">
+                        <option value="professional">Professional Announcer</option>
+                        <option value="comedian">Comedian</option>
+                        <option value="dramatic">Dramatic Storyteller</option>
+                        <option value="technical">Technical Expert</option>
+                        <option value="random">🎲 Surprise Me!</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-primary" id="generateBtn"><span>🎬 Generate Experience</span></button>
+                <button class="btn-learn" id="mainLearningBtn"><span>💬 Open Learning Panel</span></button>
+                <button class="btn-secondary" id="resetBtn"><span>🔄 Reset</span></button>
+            </div>
+        </div>
+
+        <div id="statusArea"></div>
+
+        <div class="visualization-area">
+            <canvas id="visualizationCanvas"></canvas>
+        </div>
+
+        <div class="commentary-panel">
+            <div class="commentary-header">📢 Live Commentary</div>
+            <div class="commentary-text" id="commentaryText">
+                Select a visualization and commentary style above, then click "Generate Experience" to begin exploring real Toyota GR Cup race data from Barber Motorsports Park!
+            </div>
+        </div>
+
+        <div class="playback-controls">
+            <button class="btn-primary" id="playBtn" disabled><span>▶️ Play</span></button>
+            <button class="btn-secondary" id="pauseBtn" disabled><span>⏸️ Pause</span></button>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+            <div class="speed-control">
+                <label for="speedSlider" style="font-size: 0.75rem;">Speed:</label>
+                <input type="range" id="speedSlider" min="0.5" max="2" step="0.1" value="1">
+                <span id="speedValue">1.0x</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wildcard Modal -->
+    <div class="modal" id="wildcardModal">
+        <div class="modal-content">
+            <div class="modal-header">✨ Wildcard Challenge Mode</div>
+            <p style="margin-bottom: 20px; opacity: 0.9;">Tell me how to make your experience more interesting, wacky, or challenging!</p>
+
+            <div class="quick-suggestions">
+                <button class="suggestion-btn" data-suggestion="Make the visualization neon colors">🌈 Neon Colors</button>
+                <button class="suggestion-btn" data-suggestion="Talk about unicorns, dragons, and marshmallows">🦄 Fantasy Theme</button>
+                <button class="suggestion-btn" data-suggestion="Make it sound like a cooking show">👨‍🍳 Cooking Show</button>
+                <button class="suggestion-btn" data-suggestion="Turn this into a medieval battle narrative">⚔️ Medieval Battle</button>
+            </div>
+
+            <div class="chat-area" id="chatArea">
+                <div class="chat-message ai">
+                    <div class="sender">AI Assistant</div>
+                    <div>Ready to make things wild! Tell me what creative changes you want to the visualization or commentary. Try things like "make it sound like a nature documentary" or "add neon colors and talk about it like a rave"!</div>
+                </div>
+            </div>
+
+            <div class="chat-input-area">
+                <textarea class="chat-input" id="wildcardInput" placeholder="E.g., 'Make the cars sound like they have personalities' or 'Turn this into a space opera'"></textarea>
+                <button class="btn-primary" id="sendWildcardBtn"><span>Send</span></button>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-primary" id="applyWildcardBtn" disabled><span>Apply Changes</span></button>
+                <button class="btn-secondary" id="resetWildcardBtn"><span>Reset to Original</span></button>
+                <button class="btn-secondary" id="closeModalBtn"><span>Close</span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Educational Preview Modal -->
+    <div class="modal" id="previewModal">
+        <div class="modal-content">
+            <div class="modal-header">📚 Understanding Your Visualization</div>
+
+            <div class="preview-section" id="previewContent">
+                <!-- Content will be dynamically populated -->
+            </div>
+
+            <div class="preview-actions">
+                <button class="btn-primary" id="startVisualizationBtn"><span>Start Visualization</span></button>
+                <button class="btn-learn" id="openLearningModeBtn"><span>💬 Open Learning Panel</span></button>
+                <button class="btn-secondary" id="closePreviewBtn"><span>Close</span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Learning Mode Side Panel -->
+    <div class="learning-panel" id="learningPanel">
+        <div class="learning-panel-header">
+            <div class="learning-panel-title">💬 Learning Mode</div>
+            <button class="close-panel-btn" id="closeLearningPanel">×</button>
+        </div>
+
+        <div class="learning-panel-content">
+            <div class="learning-intro">
+                <p><strong>Ask me anything about the race data!</strong> I can help you understand the visualization, explain racing concepts, or dive deeper into specific drivers, sectors, and performance patterns.</p>
+            </div>
+
+            <div class="learning-chat-container" id="learningChatArea">
+                <div class="chat-message ai">
+                    <div class="sender">AI Learning Assistant</div>
+                    <div>
+                        <p>Welcome! I'm here to help you explore and understand the race data. Here are some things you can ask me:</p>
+                        <ul style="margin: 10px 0 0 20px; line-height: 1.8;">
+                            <li>What does this visualization show?</li>
+                            <li>Which driver was fastest?</li>
+                            <li>Explain what sector times mean</li>
+                            <li>Why is consistency important in racing?</li>
+                            <li>How does weather affect performance?</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="learning-panel-footer">
+            <div class="quick-suggestions">
+                <button class="suggestion-btn" data-learning-q="What is this visualization showing me?">📊 Explain Viz</button>
+                <button class="suggestion-btn" data-learning-q="Which driver had the best performance?">🏆 Best Driver</button>
+                <button class="suggestion-btn" data-learning-q="What are sector times?">⏱️ Sector Times</button>
+                <button class="suggestion-btn" data-learning-q="How does tire degradation work?">🛞 Tire Wear</button>
+            </div>
+
+            <div class="chat-input-area">
+                <textarea class="chat-input" id="learningChatInput" placeholder="Ask a question about the race data..." rows="3"></textarea>
+                <button class="btn-primary" id="sendLearningBtn"><span>Send</span></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+    <script>
+        // Real Toyota GR Cup Race Data from Barber Motorsports Park
+        const RACE_DATA = {"laps":[{"num":"3","lap":1,"time":114.168,"s1":33.41,"s2":43.53,"s3":37.22,"kph":117,"topSpeed":182,"flag":"FCY","imp":"0"},{"num":"3","lap":2,"time":133.691,"s1":39.57,"s2":57.34,"s3":36.78,"kph":100,"topSpeed":145,"flag":"FCY","imp":"0"},{"num":"3","lap":3,"time":118.021,"s1":33.8,"s2":49.85,"s3":34.37,"kph":113,"topSpeed":156,"flag":"GF","imp":"0"},{"num":"3","lap":4,"time":100.861,"s1":27.57,"s2":43.83,"s3":29.46,"kph":132,"topSpeed":182,"flag":"GF","imp":"0"},{"num":"3","lap":5,"time":99.725,"s1":27.21,"s2":43.39,"s3":29.12,"kph":134,"topSpeed":183,"flag":"GF","imp":"0"},{"num":"3","lap":6,"time":100.323,"s1":27.15,"s2":43.68,"s3":29.5,"kph":133,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"3","lap":7,"time":99.387,"s1":27.04,"s2":43.09,"s3":29.26,"kph":134,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"3","lap":8,"time":99.87,"s1":27.16,"s2":43.42,"s3":29.28,"kph":133,"topSpeed":182,"flag":"GF","imp":"0"},{"num":"3","lap":9,"time":99.167,"s1":27.08,"s2":42.98,"s3":29.11,"kph":134,"topSpeed":183,"flag":"GF","imp":"2"},{"num":"3","lap":10,"time":99.284,"s1":26.96,"s2":43.16,"s3":29.16,"kph":134,"topSpeed":183,"flag":"GF","imp":"0"},{"num":"3","lap":11,"time":99.955,"s1":27.21,"s2":43.48,"s3":29.26,"kph":133,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"3","lap":12,"time":100.084,"s1":27.2,"s2":43.31,"s3":29.57,"kph":133,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"3","lap":13,"time":100.207,"s1":27.4,"s2":43.35,"s3":29.46,"kph":133,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"3","lap":14,"time":99.817,"s1":27.19,"s2":43.15,"s3":29.48,"kph":134,"topSpeed":183,"flag":"GF","imp":"0"},{"num":"3","lap":15,"time":99.71,"s1":27.06,"s2":43.48,"s3":29.17,"kph":134,"topSpeed":183,"flag":"GF","imp":"0"},{"num":"3","lap":16,"time":100.182,"s1":27.22,"s2":43.81,"s3":29.14,"kph":133,"topSpeed":181,"flag":"GF","imp":"0"},{"num":"3","lap":17,"time":100.248,"s1":27.19,"s2":43.53,"s3":29.53,"kph":133,"topSpeed":182,"flag":"GF","imp":"0"},{"num":"3","lap":18,"time":99.611,"s1":27.2,"s2":43.26,"s3":29.15,"kph":134,"topSpeed":182,"flag":"GF","imp":"0"},{"num":"3","lap":19,"time":99.79,"s1":27.2,"s2":43.54,"s3":29.05,"kph":134,"topSpeed":181,"flag":"GF","imp":"0"},{"num":"3","lap":20,"time":99.552,"s1":27.16,"s2":43.25,"s3":29.14,"kph":134,"topSpeed":182,"flag":"GF","imp":"0"},{"num":"3","lap":21,"time":99.805,"s1":27.2,"s2":43.34,"s3":29.27,"kph":134,"topSpeed":181,"flag":"GF","imp":"0"},{"num":"3","lap":22,"time":99.982,"s1":27.43,"s2":43.16,"s3":29.38,"kph":133,"topSpeed":182,"flag":"GF","imp":"0"},{"num":"3","lap":23,"time":100.296,"s1":27.13,"s2":43.86,"s3":29.31,"kph":133,"topSpeed":182,"flag":"GF","imp":"0"},{"num":"3","lap":24,"time":99.975,"s1":27.27,"s2":43.24,"s3":29.47,"kph":133,"topSpeed":181,"flag":"GF","imp":"0"},{"num":"3","lap":25,"time":100.126,"s1":27.33,"s2":43.4,"s3":29.4,"kph":133,"topSpeed":181,"flag":"GF","imp":"0"},{"num":"3","lap":26,"time":99.69,"s1":27.25,"s2":43.26,"s3":29.18,"kph":134,"topSpeed":182,"flag":"GF","imp":"0"},{"num":"3","lap":27,"time":100.083,"s1":27.18,"s2":43.29,"s3":29.6,"kph":133,"topSpeed":182,"flag":"FF","imp":"0"},{"num":"111","lap":1,"time":108.689,"s1":30.38,"s2":43.27,"s3":35.03,"kph":123,"topSpeed":183,"flag":"FCY","imp":"0"},{"num":"111","lap":2,"time":134.812,"s1":38.61,"s2":58.87,"s3":37.33,"kph":99,"topSpeed":134,"flag":"FCY","imp":"0"},{"num":"111","lap":3,"time":119.471,"s1":33.51,"s2":51.09,"s3":34.87,"kph":112,"topSpeed":140,"flag":"GF","imp":"0"},{"num":"111","lap":4,"time":100.847,"s1":27.35,"s2":44.51,"s3":28.99,"kph":132,"topSpeed":182,"flag":"GF","imp":"0"},{"num":"111","lap":5,"time":99.289,"s1":26.95,"s2":43.04,"s3":29.3,"kph":134,"topSpeed":183,"flag":"GF","imp":"0"},{"num":"111","lap":6,"time":99.506,"s1":26.96,"s2":43.18,"s3":29.37,"kph":134,"topSpeed":183,"flag":"GF","imp":"0"},{"num":"111","lap":7,"time":99.141,"s1":27.09,"s2":42.97,"s3":29.07,"kph":134,"topSpeed":182,"flag":"GF","imp":"0"},{"num":"111","lap":8,"time":99.301,"s1":27.15,"s2":43.02,"s3":29.13,"kph":134,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"111","lap":9,"time":99.056,"s1":27.13,"s2":42.95,"s3":28.97,"kph":134,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"111","lap":10,"time":99.21,"s1":27.04,"s2":42.96,"s3":29.22,"kph":134,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"111","lap":11,"time":100.034,"s1":27.49,"s2":43.23,"s3":29.3,"kph":133,"topSpeed":182,"flag":"GF","imp":"0"},{"num":"111","lap":12,"time":99.394,"s1":27.07,"s2":43.37,"s3":28.96,"kph":134,"topSpeed":183,"flag":"GF","imp":"0"},{"num":"111","lap":13,"time":99.283,"s1":27.0,"s2":43.08,"s3":29.2,"kph":134,"topSpeed":183,"flag":"GF","imp":"0"},{"num":"111","lap":14,"time":99.571,"s1":27.28,"s2":43.19,"s3":29.11,"kph":134,"topSpeed":183,"flag":"GF","imp":"0"},{"num":"111","lap":15,"time":99.745,"s1":27.37,"s2":43.16,"s3":29.22,"kph":134,"topSpeed":183,"flag":"GF","imp":"0"},{"num":"111","lap":16,"time":99.698,"s1":27.23,"s2":43.36,"s3":29.11,"kph":134,"topSpeed":182,"flag":"GF","imp":"0"},{"num":"111","lap":17,"time":101.763,"s1":27.22,"s2":44.83,"s3":29.72,"kph":131,"topSpeed":181,"flag":"GF","imp":"0"},{"num":"111","lap":18,"time":99.655,"s1":27.3,"s2":43.19,"s3":29.16,"kph":134,"topSpeed":183,"flag":"GF","imp":"0"},{"num":"111","lap":19,"time":99.208,"s1":27.02,"s2":43.0,"s3":29.18,"kph":134,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"111","lap":20,"time":99.708,"s1":27.01,"s2":43.63,"s3":29.06,"kph":134,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"111","lap":21,"time":99.214,"s1":27.1,"s2":43.0,"s3":29.11,"kph":134,"topSpeed":183,"flag":"GF","imp":"0"},{"num":"111","lap":22,"time":99.027,"s1":27.05,"s2":42.9,"s3":29.07,"kph":135,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"111","lap":23,"time":99.49,"s1":27.12,"s2":43.38,"s3":29.0,"kph":134,"topSpeed":185,"flag":"GF","imp":"0"},{"num":"111","lap":24,"time":98.944,"s1":26.98,"s2":43.01,"s3":28.95,"kph":135,"topSpeed":184,"flag":"GF","imp":"2"},{"num":"111","lap":25,"time":99.242,"s1":27.08,"s2":43.08,"s3":29.09,"kph":134,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"111","lap":26,"time":99.168,"s1":27.06,"s2":43.12,"s3":28.99,"kph":134,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"111","lap":27,"time":99.427,"s1":26.92,"s2":43.31,"s3":29.2,"kph":134,"topSpeed":184,"flag":"FF","imp":"0"},{"num":"13","lap":1,"time":102.284,"s1":27.65,"s2":42.92,"s3":31.72,"kph":130,"topSpeed":184,"flag":"FCY","imp":"0"},{"num":"13","lap":2,"time":134.965,"s1":37.86,"s2":60.18,"s3":36.92,"kph":99,"topSpeed":142,"flag":"FCY","imp":"0"},{"num":"13","lap":3,"time":123.122,"s1":34.21,"s2":52.14,"s3":36.77,"kph":108,"topSpeed":138,"flag":"GF","imp":"0"},{"num":"13","lap":4,"time":97.864,"s1":26.9,"s2":42.45,"s3":28.51,"kph":136,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"13","lap":5,"time":97.798,"s1":26.7,"s2":42.6,"s3":28.5,"kph":136,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"13","lap":6,"time":97.543,"s1":26.59,"s2":42.45,"s3":28.5,"kph":137,"topSpeed":185,"flag":"GF","imp":"0"},{"num":"13","lap":7,"time":97.513,"s1":26.61,"s2":42.44,"s3":28.46,"kph":137,"topSpeed":185,"flag":"GF","imp":"0"},{"num":"13","lap":8,"time":97.428,"s1":26.63,"s2":42.38,"s3":28.42,"kph":137,"topSpeed":185,"flag":"GF","imp":"3"},{"num":"13","lap":9,"time":97.642,"s1":26.64,"s2":42.45,"s3":28.55,"kph":136,"topSpeed":185,"flag":"GF","imp":"0"},{"num":"13","lap":10,"time":97.679,"s1":26.7,"s2":42.43,"s3":28.55,"kph":136,"topSpeed":185,"flag":"GF","imp":"0"},{"num":"13","lap":11,"time":97.694,"s1":26.72,"s2":42.38,"s3":28.59,"kph":136,"topSpeed":185,"flag":"GF","imp":"0"},{"num":"13","lap":12,"time":97.948,"s1":26.73,"s2":42.49,"s3":28.74,"kph":136,"topSpeed":185,"flag":"GF","imp":"0"},{"num":"13","lap":13,"time":97.923,"s1":26.77,"s2":42.44,"s3":28.71,"kph":136,"topSpeed":185,"flag":"GF","imp":"0"},{"num":"13","lap":14,"time":98.101,"s1":26.82,"s2":42.58,"s3":28.7,"kph":136,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"13","lap":15,"time":98.262,"s1":26.71,"s2":42.73,"s3":28.82,"kph":136,"topSpeed":185,"flag":"GF","imp":"0"},{"num":"13","lap":16,"time":98.835,"s1":26.69,"s2":43.05,"s3":29.09,"kph":135,"topSpeed":185,"flag":"GF","imp":"0"},{"num":"13","lap":17,"time":98.295,"s1":26.85,"s2":42.55,"s3":28.9,"kph":136,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"13","lap":18,"time":98.286,"s1":26.89,"s2":42.65,"s3":28.74,"kph":136,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"13","lap":19,"time":98.485,"s1":26.86,"s2":42.77,"s3":28.86,"kph":135,"topSpeed":185,"flag":"GF","imp":"0"},{"num":"13","lap":20,"time":98.416,"s1":26.88,"s2":42.65,"s3":28.89,"kph":135,"topSpeed":185,"flag":"GF","imp":"0"},{"num":"13","lap":21,"time":98.281,"s1":26.85,"s2":42.54,"s3":28.9,"kph":136,"topSpeed":185,"flag":"GF","imp":"0"},{"num":"13","lap":22,"time":98.266,"s1":26.79,"s2":42.68,"s3":28.79,"kph":136,"topSpeed":185,"flag":"GF","imp":"0"},{"num":"13","lap":23,"time":98.199,"s1":26.75,"s2":42.57,"s3":28.88,"kph":136,"topSpeed":185,"flag":"GF","imp":"0"},{"num":"13","lap":24,"time":98.328,"s1":26.89,"s2":42.46,"s3":28.97,"kph":136,"topSpeed":185,"flag":"GF","imp":"0"},{"num":"13","lap":25,"time":98.635,"s1":27.03,"s2":42.61,"s3":29.0,"kph":135,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"13","lap":26,"time":98.55,"s1":26.91,"s2":42.72,"s3":28.91,"kph":135,"topSpeed":185,"flag":"GF","imp":"0"},{"num":"13","lap":27,"time":98.693,"s1":26.97,"s2":42.61,"s3":29.11,"kph":135,"topSpeed":184,"flag":"FF","imp":"0"},{"num":"2","lap":1,"time":104.133,"s1":28.51,"s2":43.17,"s3":32.45,"kph":128,"topSpeed":184,"flag":"FCY","imp":"0"},{"num":"2","lap":2,"time":135.542,"s1":38.31,"s2":60.18,"s3":37.05,"kph":98,"topSpeed":137,"flag":"FCY","imp":"0"},{"num":"2","lap":3,"time":121.66,"s1":33.46,"s2":51.8,"s3":36.4,"kph":110,"topSpeed":141,"flag":"GF","imp":"0"},{"num":"2","lap":4,"time":98.74,"s1":27.02,"s2":42.83,"s3":28.89,"kph":135,"topSpeed":183,"flag":"GF","imp":"0"},{"num":"2","lap":5,"time":98.326,"s1":26.91,"s2":42.77,"s3":28.65,"kph":136,"topSpeed":184,"flag":"GF","imp":"2"},{"num":"2","lap":6,"time":98.376,"s1":26.97,"s2":42.52,"s3":28.89,"kph":136,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"2","lap":7,"time":98.531,"s1":27.05,"s2":42.55,"s3":28.93,"kph":135,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"2","lap":8,"time":98.761,"s1":27.04,"s2":42.74,"s3":28.98,"kph":135,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"2","lap":9,"time":99.443,"s1":27.73,"s2":43.0,"s3":28.71,"kph":134,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"2","lap":10,"time":99.144,"s1":27.04,"s2":43.24,"s3":28.87,"kph":134,"topSpeed":185,"flag":"GF","imp":"0"},{"num":"2","lap":11,"time":98.594,"s1":27.04,"s2":42.71,"s3":28.85,"kph":135,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"2","lap":12,"time":98.525,"s1":27.1,"s2":42.79,"s3":28.64,"kph":135,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"2","lap":13,"time":98.56,"s1":27.02,"s2":42.74,"s3":28.8,"kph":135,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"2","lap":14,"time":98.367,"s1":26.89,"s2":42.75,"s3":28.72,"kph":136,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"2","lap":15,"time":98.664,"s1":27.0,"s2":42.84,"s3":28.82,"kph":135,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"2","lap":16,"time":98.712,"s1":26.92,"s2":42.9,"s3":28.89,"kph":135,"topSpeed":183,"flag":"GF","imp":"0"},{"num":"2","lap":17,"time":98.371,"s1":26.98,"s2":42.72,"s3":28.67,"kph":136,"topSpeed":183,"flag":"GF","imp":"0"},{"num":"2","lap":18,"time":98.496,"s1":27.05,"s2":42.7,"s3":28.74,"kph":135,"topSpeed":183,"flag":"GF","imp":"0"},{"num":"2","lap":19,"time":98.49,"s1":26.97,"s2":42.78,"s3":28.74,"kph":135,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"2","lap":20,"time":98.366,"s1":26.95,"s2":42.77,"s3":28.64,"kph":136,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"2","lap":21,"time":98.368,"s1":26.84,"s2":42.75,"s3":28.77,"kph":136,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"2","lap":22,"time":98.61,"s1":26.94,"s2":42.87,"s3":28.8,"kph":135,"topSpeed":183,"flag":"GF","imp":"0"},{"num":"2","lap":23,"time":98.599,"s1":26.9,"s2":42.87,"s3":28.83,"kph":135,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"2","lap":24,"time":98.839,"s1":27.14,"s2":42.93,"s3":28.76,"kph":135,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"2","lap":25,"time":98.783,"s1":26.95,"s2":42.84,"s3":29.0,"kph":135,"topSpeed":182,"flag":"GF","imp":"0"},{"num":"2","lap":26,"time":99.143,"s1":27.5,"s2":42.77,"s3":28.87,"kph":134,"topSpeed":183,"flag":"GF","imp":"0"},{"num":"2","lap":27,"time":98.981,"s1":27.11,"s2":42.94,"s3":28.93,"kph":135,"topSpeed":184,"flag":"FF","imp":"0"},{"num":"7","lap":1,"time":107.283,"s1":29.31,"s2":43.53,"s3":34.44,"kph":124,"topSpeed":184,"flag":"FCY","imp":"0"},{"num":"7","lap":2,"time":135.09,"s1":38.53,"s2":59.39,"s3":37.17,"kph":99,"topSpeed":132,"flag":"FCY","imp":"0"},{"num":"7","lap":3,"time":120.118,"s1":33.49,"s2":51.38,"s3":35.25,"kph":111,"topSpeed":147,"flag":"GF","imp":"0"},{"num":"7","lap":4,"time":99.056,"s1":27.18,"s2":42.9,"s3":28.97,"kph":134,"topSpeed":183,"flag":"GF","imp":"0"},{"num":"7","lap":5,"time":99.14,"s1":27.06,"s2":43.06,"s3":29.02,"kph":134,"topSpeed":183,"flag":"GF","imp":"0"},{"num":"7","lap":6,"time":98.903,"s1":26.82,"s2":42.88,"s3":29.19,"kph":135,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"7","lap":7,"time":98.798,"s1":26.87,"s2":42.93,"s3":29.0,"kph":135,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"7","lap":8,"time":99.046,"s1":26.99,"s2":42.93,"s3":29.13,"kph":134,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"7","lap":9,"time":98.581,"s1":26.96,"s2":42.87,"s3":28.75,"kph":135,"topSpeed":184,"flag":"GF","imp":"2"},{"num":"7","lap":10,"time":98.603,"s1":26.84,"s2":42.7,"s3":29.06,"kph":135,"topSpeed":185,"flag":"GF","imp":"0"},{"num":"7","lap":11,"time":98.661,"s1":26.96,"s2":42.77,"s3":28.93,"kph":135,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"7","lap":12,"time":98.792,"s1":26.99,"s2":42.8,"s3":28.99,"kph":135,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"7","lap":13,"time":98.764,"s1":26.84,"s2":42.95,"s3":28.97,"kph":135,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"7","lap":14,"time":98.589,"s1":26.88,"s2":42.84,"s3":28.88,"kph":135,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"7","lap":15,"time":99.203,"s1":26.82,"s2":43.21,"s3":29.17,"kph":134,"topSpeed":183,"flag":"GF","imp":"0"},{"num":"7","lap":16,"time":99.058,"s1":27.14,"s2":42.91,"s3":29.01,"kph":134,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"7","lap":17,"time":98.869,"s1":27.11,"s2":42.82,"s3":28.94,"kph":135,"topSpeed":183,"flag":"GF","imp":"0"},{"num":"7","lap":18,"time":99.228,"s1":27.18,"s2":42.98,"s3":29.08,"kph":134,"topSpeed":182,"flag":"GF","imp":"0"},{"num":"7","lap":19,"time":99.045,"s1":27.09,"s2":42.87,"s3":29.09,"kph":134,"topSpeed":184,"flag":"GF","imp":"0"},{"num":"7","lap":20,"time":98.9,"s1":26.99,"s2":42.87,"s3":29.05,"kph":135,"topSpeed":183,"flag":"GF","imp":"0"},{"num":"7","lap":21,"time":99.27,"s1":27.02,"s2":43.09,"s3":29.16,"kph":134,"topSpeed":183,"flag":"GF","imp":"0"},{"num":"7","lap":22,"time":98.925,"s1":26.96,"s2":42.98,"s3":28.99,"kph":135,"topSpeed":183,"flag":"GF","imp":"0"},{"num":"7","lap":23,"time":98.758,"s1":26.91,"s2":42.73,"s3":29.12,"kph":135,"topSpeed":183,"flag":"GF","imp":"0"},{"num":"7","lap":24,"time":98.89,"s1":26.96,"s2":42.9,"s3":29.03,"kph":135,"topSpeed":183,"flag":"GF","imp":"0"},{"num":"7","lap":25,"time":98.916,"s1":27.03,"s2":42.91,"s3":28.97,"kph":135,"topSpeed":182,"flag":"GF","imp":"0"},{"num":"7","lap":26,"time":99.111,"s1":27.21,"s2":42.86,"s3":29.04,"kph":134,"topSpeed":183,"flag":"GF","imp":"0"},{"num":"7","lap":27,"time":99.183,"s1":26.97,"s2":42.91,"s3":29.3,"kph":134,"topSpeed":183,"flag":"FF","imp":"0"}],"weather":[{"temp":29.8,"wind":2.9,"dir":342},{"temp":29.8,"wind":4.0,"dir":11},{"temp":29.4,"wind":11.2,"dir":318},{"temp":29.4,"wind":6.5,"dir":286},{"temp":29.4,"wind":4.0,"dir":307},{"temp":29.9,"wind":1.4,"dir":331},{"temp":30.6,"wind":4.7,"dir":64},{"temp":30.7,"wind":7.6,"dir":316},{"temp":30.5,"wind":2.2,"dir":4},{"temp":30.4,"wind":2.9,"dir":324},{"temp":30.1,"wind":0.4,"dir":42},{"temp":30.6,"wind":2.2,"dir":352},{"temp":30.9,"wind":4.0,"dir":326},{"temp":30.6,"wind":5.4,"dir":358},{"temp":30.4,"wind":1.1,"dir":279}],"best":[{"num":"2","best":"1:38.326","avg":"1:38.421"},{"num":"3","best":"1:39.167","avg":"1:39.572"},{"num":"7","best":"1:38.581","avg":"1:38.730"},{"num":"13","best":"1:37.428","avg":"1:37.703"},{"num":"111","best":"1:38.944","avg":"1:39.149"}]};
+
+        // Driver info
+        const DRIVERS = {
+            '2': { color: '#eb0a1e', name: 'Driver #2' },
+            '3': { color: '#00d4ff', name: 'Driver #3' },
+            '7': { color: '#ffd700', name: 'Driver #7' },
+            '13': { color: '#00ff00', name: 'Driver #13' },
+            '111': { color: '#ff00ff', name: 'Driver #111' }
+        };
+
+        // App State
+        const appState = {
+            currentViz: null,
+            currentStyle: null,
+            commentary: [],
+            currentSegment: 0,
+            isPlaying: false,
+            playbackSpeed: 1.0,
+            wildcardModifications: null,
+            animationInterval: null
+        };
+
+        // DOM Elements
+        const vizSelect = document.getElementById('vizSelect');
+        const styleSelect = document.getElementById('styleSelect');
+        const generateBtn = document.getElementById('generateBtn');
+        // const wildcardBtn = document.getElementById('wildcardBtn'); // Removed
+        const resetBtn = document.getElementById('resetBtn');
+        const playBtn = document.getElementById('playBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const speedSlider = document.getElementById('speedSlider');
+        const speedValue = document.getElementById('speedValue');
+        const progressFill = document.getElementById('progressFill');
+        const commentaryText = document.getElementById('commentaryText');
+        const statusArea = document.getElementById('statusArea');
+        const canvas = document.getElementById('visualizationCanvas');
+        const ctx = canvas.getContext('2d');
+        const wildcardModal = document.getElementById('wildcardModal');
+        const wildcardInput = document.getElementById('wildcardInput');
+        const sendWildcardBtn = document.getElementById('sendWildcardBtn');
+        const applyWildcardBtn = document.getElementById('applyWildcardBtn');
+        const resetWildcardBtn = document.getElementById('resetWildcardBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const chatArea = document.getElementById('chatArea');
+        const previewModal = document.getElementById('previewModal');
+        const previewContent = document.getElementById('previewContent');
+        const startVisualizationBtn = document.getElementById('startVisualizationBtn');
+        const openLearningModeBtn = document.getElementById('openLearningModeBtn');
+        const closePreviewBtn = document.getElementById('closePreviewBtn');
+        const learningPanel = document.getElementById('learningPanel');
+        const learningChatArea = document.getElementById('learningChatArea');
+        const learningChatInput = document.getElementById('learningChatInput');
+        const sendLearningBtn = document.getElementById('sendLearningBtn');
+        const closeLearningPanel = document.getElementById('closeLearningPanel');
+
+        // Set canvas size
+        function resizeCanvas() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            // Re-render current visualization if active
+            if (appState.currentViz) {
+                const currentProgress = appState.currentSegment / Math.max(1, appState.commentary.length);
+                renderVisualization(appState.currentViz, currentProgress);
+            }
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Function to toggle learning panel
+        function toggleLearningPanel(show) {
+            if (show) {
+                learningPanel.classList.add('active');
+                document.body.classList.add('learning-active');
+            } else {
+                learningPanel.classList.remove('active');
+                document.body.classList.remove('learning-active');
+            }
+            // Give time for transition then resize canvas
+            setTimeout(resizeCanvas, 450);
+        }
+
+        // Visualization metadata
+        const visualizations = {
+            'sector-heatmap': {
+                name: 'Sector Consistency Heatmap',
+                description: 'Shows sector time consistency across all laps for each driver',
+                educational: {
+                    summary: 'This visualization reveals which drivers can hit their marks consistently lap after lap, and where they struggle to maintain performance.',
+                    whatToLookFor: [
+                        '<strong>Green cells:</strong> Driver hit their personal best time in that sector',
+                        '<strong>Yellow/Orange cells:</strong> Slightly slower than their best (1-2% off)',
+                        '<strong>Red cells:</strong> Significant time loss (2%+ slower)',
+                        '<strong>Patterns:</strong> Consistent colors mean steady performance, while scattered colors show unpredictability'
+                    ],
+                    whyItMatters: 'Consistency wins races. A driver who can hit the same lap times repeatedly is easier to predict strategically and puts less stress on their equipment.'
+                }
+            },
+            'pace-degradation': {
+                name: 'Pace Degradation Timeline',
+                description: 'Tracks how lap times change throughout the race',
+                educational: {
+                    summary: 'Watch how each driver\'s lap times evolve from start to finish. Some drivers start strong and fade, others build momentum as the race progresses.',
+                    whatToLookFor: [
+                        '<strong>Rising lines:</strong> Lap times getting slower (degradation)',
+                        '<strong>Flat lines:</strong> Maintaining consistent pace',
+                        '<strong>Dips in lines:</strong> Finding speed and improving',
+                        '<strong>Line separation:</strong> Gap between drivers changing over time'
+                    ],
+                    whyItMatters: 'Tire wear, fuel load, and driver adaptation all affect pace. Understanding degradation patterns helps predict who will be fastest at race end.'
+                }
+            },
+            'weather-impact': {
+                name: 'Weather Impact Analysis',
+                description: 'Correlates weather conditions with performance changes',
+                educational: {
+                    summary: 'See how temperature, wind speed, and wind direction affected each driver\'s performance throughout the race.',
+                    whatToLookFor: [
+                        '<strong>Temperature changes:</strong> Higher temps can reduce grip and increase tire wear',
+                        '<strong>Wind gusts:</strong> Sudden spikes in wind speed affecting lap times',
+                        '<strong>Wind direction:</strong> Headwinds vs. tailwinds on different parts of track',
+                        '<strong>Performance correlation:</strong> Which drivers adapted best to changing conditions'
+                    ],
+                    whyItMatters: 'Weather is the great equalizer. Drivers who can adapt to changing conditions often gain crucial advantages during a race.'
+                }
+            },
+            'speed-hierarchy': {
+                name: 'Speed Trap Hierarchy',
+                description: 'Compares top speeds and average speeds across drivers',
+                educational: {
+                    summary: 'Pure speed comparison - who had the fastest single-lap speed vs. who maintained the highest average throughout the race.',
+                    whatToLookFor: [
+                        '<strong>Top speed bars:</strong> Peak velocity achieved by each driver',
+                        '<strong>Average speed bars:</strong> Sustained speed throughout all laps',
+                        '<strong>Gap between top and average:</strong> Shows consistency vs. peak performance',
+                        '<strong>Rankings:</strong> Different drivers may lead in different categories'
+                    ],
+                    whyItMatters: 'A high top speed means power and aerodynamics. A high average speed means the driver consistently carried momentum through corners.'
+                }
+            },
+            'sector-battle': {
+                name: 'Sector 1 vs Sector 3 Battle',
+                description: 'Reveals driving style: brake heroes vs corner exit kings',
+                educational: {
+                    summary: 'This scatter plot reveals driver personalities. Sector 1 is typically braking and turn-in, while Sector 3 is about corner exit and acceleration.',
+                    whatToLookFor: [
+                        '<strong>Upper left quadrant:</strong> Fast in Sector 1 (good braking), slower in Sector 3',
+                        '<strong>Lower right quadrant:</strong> Slower in Sector 1, fast in Sector 3 (smooth exits)',
+                        '<strong>Lower left quadrant:</strong> Fast in both - the sweet spot',
+                        '<strong>Bubble size:</strong> Often represents another metric like consistency'
+                    ],
+                    whyItMatters: 'Driving style matters for setup and tire management. "Brake heroes" may be harder on equipment, while "exit kings" preserve tires better.'
+                }
+            },
+            'flag-performance': {
+                name: 'Green Flag vs FCY Performance',
+                description: 'Compares performance under different race conditions',
+                educational: {
+                    summary: 'How did drivers perform under racing conditions (green flag) versus caution periods (Full Course Yellow/FCY)? This reveals who can push when it counts.',
+                    whatToLookFor: [
+                        '<strong>Green bars:</strong> Performance during racing laps',
+                        '<strong>Yellow bars:</strong> Performance during caution laps',
+                        '<strong>Large differences:</strong> Some drivers struggle under pressure or excel in battles',
+                        '<strong>Smaller differences:</strong> Consistent performance regardless of conditions'
+                    ],
+                    whyItMatters: 'Racing under pressure is different from cruising under caution. Drivers who can deliver when it matters are the real competitors.'
+                }
+            },
+            'improvement-tracker': {
+                name: 'Improvement Momentum Tracker',
+                description: 'Highlights when drivers find time and improve lap by lap',
+                educational: {
+                    summary: 'Track the exact moments when drivers found speed improvements. Did they get better as they learned the track? Or did they peak early?',
+                    whatToLookFor: [
+                        '<strong>Upward arrows/markers:</strong> Laps where driver improved their time',
+                        '<strong>Clusters of improvements:</strong> Finding a rhythm or making a setup change',
+                        '<strong>Improvement magnitude:</strong> Size shows how much time was found',
+                        '<strong>Timing of improvements:</strong> Early, mid, or late race gains'
+                    ],
+                    whyItMatters: 'Drivers who can continuously improve are adapting to changing conditions, learning the track, or managing their equipment better.'
+                }
+            },
+            'consistency-bubbles': {
+                name: 'Consistency Score Bubbles',
+                description: 'Plots average pace vs consistency for each driver',
+                educational: {
+                    summary: 'The ultimate performance matrix: fast vs. reliable. Each driver is a bubble positioned by their average pace and how consistently they hit it.',
+                    whatToLookFor: [
+                        '<strong>Lower left quadrant:</strong> Fast AND consistent - the ideal',
+                        '<strong>Lower right quadrant:</strong> Slow but consistent - reliable but not fast',
+                        '<strong>Upper left quadrant:</strong> Fast but erratic - speed without reliability',
+                        '<strong>Bubble size:</strong> May represent total race time or number of laps'
+                    ],
+                    whyItMatters: 'In endurance racing, consistency often beats raw speed. A car that finishes predictably can be strategized around. A wild card cannot.'
+                }
+            }
+        };
+
+        // Visualization rendering functions
+        function renderVisualization(vizType, progress) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            switch(vizType) {
+                case 'sector-heatmap':
+                    renderSectorHeatmap(progress);
+                    break;
+                case 'pace-degradation':
+                    renderPaceDegradation(progress);
+                    break;
+                case 'weather-impact':
+                    renderWeatherImpact(progress);
+                    break;
+                case 'speed-hierarchy':
+                    renderSpeedHierarchy(progress);
+                    break;
+                case 'sector-battle':
+                    renderSectorBattle(progress);
+                    break;
+                case 'flag-performance':
+                    renderFlagPerformance(progress);
+                    break;
+                case 'improvement-tracker':
+                    renderImprovementTracker(progress);
+                    break;
+                case 'consistency-bubbles':
+                    renderConsistencyBubbles(progress);
+                    break;
+            }
+        }
+
+        function renderSectorHeatmap(progress) {
+            const drivers = Object.keys(DRIVERS);
+            const maxLap = Math.ceil(progress * 27);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 18px Orbitron';
+            ctx.fillText('Sector Consistency Heatmap', 20, 30);
+
+            const cellWidth = (canvas.width - 120) / 27;
+            const cellHeight = 50;
+
+            drivers.forEach((driverNum, idx) => {
+                const y = 60 + idx * (cellHeight + 10);
+
+                // Driver label
+                ctx.fillStyle = DRIVERS[driverNum].color;
+                ctx.font = 'bold 14px Rajdhani';
+                ctx.fillText(`Car #${driverNum}`, 20, y + cellHeight/2);
+
+                // Get driver's best sector times
+                const driverLaps = RACE_DATA.laps.filter(l => l.num === driverNum && l.lap <= maxLap);
+                if (driverLaps.length === 0) return;
+
+                const bestS1 = Math.min(...driverLaps.map(l => l.s1));
+                const bestS2 = Math.min(...driverLaps.map(l => l.s2));
+                const bestS3 = Math.min(...driverLaps.map(l => l.s3));
+
+                driverLaps.forEach(lap => {
+                    const x = 100 + (lap.lap - 1) * cellWidth;
+
+                    // S1
+                    const s1Diff = ((lap.s1 - bestS1) / bestS1) * 100;
+                    ctx.fillStyle = getHeatColor(s1Diff);
+                    ctx.fillRect(x, y, cellWidth/3 - 1, cellHeight - 5);
+
+                    // S2
+                    const s2Diff = ((lap.s2 - bestS2) / bestS2) * 100;
+                    ctx.fillStyle = getHeatColor(s2Diff);
+                    ctx.fillRect(x + cellWidth/3, y, cellWidth/3 - 1, cellHeight - 5);
+
+                    // S3
+                    const s3Diff = ((lap.s3 - bestS3) / bestS3) * 100;
+                    ctx.fillStyle = getHeatColor(s3Diff);
+                    ctx.fillRect(x + 2*cellWidth/3, y, cellWidth/3 - 1, cellHeight - 5);
+                });
+            });
+
+            // Legend
+            ctx.fillStyle = '#00ff00';
+            ctx.fillRect(20, canvas.height - 40, 15, 15);
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '12px Rajdhani';
+            ctx.fillText('Best', 40, canvas.height - 28);
+
+            ctx.fillStyle = '#ffff00';
+            ctx.fillRect(100, canvas.height - 40, 15, 15);
+            ctx.fillText('+1%', 120, canvas.height - 28);
+
+            ctx.fillStyle = '#ff0000';
+            ctx.fillRect(180, canvas.height - 40, 15, 15);
+            ctx.fillText('+2%+', 200, canvas.height - 28);
+        }
+
+        function getHeatColor(percentDiff) {
+            if (percentDiff < 0.5) return '#00ff00';
+            if (percentDiff < 1) return '#88ff00';
+            if (percentDiff < 1.5) return '#ffff00';
+            if (percentDiff < 2) return '#ff8800';
+            return '#ff0000';
+        }
+
+        function renderPaceDegradation(progress) {
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 18px Orbitron';
+            ctx.fillText('Pace Degradation Timeline', 20, 30);
+
+            const maxLap = Math.ceil(progress * 27);
+            const drivers = Object.keys(DRIVERS);
+
+            // Chart area
+            const chartLeft = 80;
+            const chartTop = 60;
+            const chartWidth = canvas.width - 120;
+            const chartHeight = canvas.height - 120;
+
+            // Draw axes
+            ctx.strokeStyle = '#333333';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(chartLeft, chartTop);
+            ctx.lineTo(chartLeft, chartTop + chartHeight);
+            ctx.lineTo(chartLeft + chartWidth, chartTop + chartHeight);
+            ctx.stroke();
+
+            // Y-axis labels (lap time)
+            ctx.fillStyle = '#888888';
+            ctx.font = '12px Rajdhani';
+            ctx.textAlign = 'right';
+            for (let i = 95; i <= 105; i += 2) {
+                const y = chartTop + chartHeight - ((i - 95) / 10) * chartHeight;
+                ctx.fillText(`${i}s`, chartLeft - 10, y + 4);
+
+                ctx.strokeStyle = '#222222';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(chartLeft, y);
+                ctx.lineTo(chartLeft + chartWidth, y);
+                ctx.stroke();
+            }
+
+            // X-axis labels (laps)
+            ctx.textAlign = 'center';
+            for (let lap = 0; lap <= 27; lap += 5) {
+                const x = chartLeft + (lap / 27) * chartWidth;
+                ctx.fillText(`L${lap}`, x, chartTop + chartHeight + 20);
+            }
+
+            // Plot lines for each driver
+            drivers.forEach(driverNum => {
+                const driverLaps = RACE_DATA.laps.filter(l => l.num === driverNum && l.lap <= maxLap && l.flag === 'GF');
+                if (driverLaps.length < 2) return;
+
+                ctx.strokeStyle = DRIVERS[driverNum].color;
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+
+                driverLaps.forEach((lap, i) => {
+                    const x = chartLeft + ((lap.lap - 1) / 27) * chartWidth;
+                    const y = chartTop + chartHeight - ((lap.time - 95) / 10) * chartHeight;
+
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                });
+
+                ctx.stroke();
+            });
+
+            // Legend
+            ctx.font = 'bold 14px Rajdhani';
+            ctx.textAlign = 'left';
+            drivers.forEach((driverNum, idx) => {
+                ctx.fillStyle = DRIVERS[driverNum].color;
+                ctx.fillText(`Car #${driverNum}`, canvas.width - 80, 80 + idx * 25);
+            });
+        }
+
+        function renderWeatherImpact(progress) {
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 18px Orbitron';
+            ctx.fillText('Weather Impact on Lap Times', 20, 30);
+
+            const maxIdx = Math.floor(progress * RACE_DATA.weather.length);
+
+            // Wind rose in center
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            const radius = 120;
+
+            // Draw wind direction indicators
+            for (let i = 0; i < maxIdx; i++) {
+                const weather = RACE_DATA.weather[i];
+                const angle = (weather.dir * Math.PI / 180) - Math.PI / 2;
+                const windMag = Math.min(weather.wind / 12, 1);
+
+                const x = cx + Math.cos(angle) * radius * windMag;
+                const y = cy + Math.sin(angle) * radius * windMag;
+
+                ctx.beginPath();
+                ctx.arc(x, y, 8, 0, Math.PI * 2);
+                ctx.fillStyle = `hsl(${200 - weather.temp * 5}, 70%, 60%)`;
+                ctx.fill();
+            }
+
+            // Compass directions
+            ctx.fillStyle = '#666666';
+            ctx.font = 'bold 16px Orbitron';
+            ctx.textAlign = 'center';
+            ctx.fillText('N', cx, cy - radius - 15);
+            ctx.fillText('S', cx, cy + radius + 25);
+            ctx.textAlign = 'left';
+            ctx.fillText('E', cx + radius + 10, cy + 5);
+            ctx.textAlign = 'right';
+            ctx.fillText('W', cx - radius - 10, cy + 5);
+
+            // Current weather stats
+            if (maxIdx > 0) {
+                const current = RACE_DATA.weather[maxIdx - 1];
+                ctx.fillStyle = '#00d4ff';
+                ctx.font = 'bold 16px Rajdhani';
+                ctx.textAlign = 'left';
+                ctx.fillText(`Temp: ${current.temp}°C`, 20, canvas.height - 60);
+                ctx.fillText(`Wind: ${current.wind} m/s`, 20, canvas.height - 35);
+                ctx.fillText(`Direction: ${current.dir}°`, 20, canvas.height - 10);
+            }
+        }
+
+        function renderSpeedHierarchy(progress) {
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 18px Orbitron';
+            ctx.fillText('Speed Trap Hierarchy', 20, 30);
+
+            const drivers = Object.keys(DRIVERS);
+            const maxLap = Math.ceil(progress * 27);
+
+            // Calculate stats for each driver
+            const stats = drivers.map(driverNum => {
+                const driverLaps = RACE_DATA.laps.filter(l => l.num === driverNum && l.lap <= maxLap);
+                if (driverLaps.length === 0) return null;
+
+                const topSpeed = Math.max(...driverLaps.map(l => l.topSpeed));
+                const avgSpeed = driverLaps.reduce((sum, l) => sum + l.kph, 0) / driverLaps.length;
+
+                return { driverNum, topSpeed, avgSpeed };
+            }).filter(s => s !== null).sort((a, b) => b.topSpeed - a.topSpeed);
+
+            // Draw bars
+            const barHeight = 60;
+            const startY = 80;
+
+            stats.forEach((stat, idx) => {
+                const y = startY + idx * (barHeight + 20);
+
+                // Driver label
+                ctx.fillStyle = DRIVERS[stat.driverNum].color;
+                ctx.font = 'bold 16px Rajdhani';
+                ctx.fillText(`#${stat.driverNum}`, 20, y + 25);
+
+                // Top speed bar
+                const topSpeedWidth = ((stat.topSpeed - 130) / 60) * (canvas.width - 200);
+                ctx.fillStyle = DRIVERS[stat.driverNum].color;
+                ctx.fillRect(100, y, topSpeedWidth, 20);
+
+                // Avg speed bar
+                const avgSpeedWidth = ((stat.avgSpeed - 130) / 60) * (canvas.width - 200);
+                ctx.fillStyle = `${DRIVERS[stat.driverNum].color}88`;
+                ctx.fillRect(100, y + 30, avgSpeedWidth, 15);
+
+                // Labels
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '14px Rajdhani';
+                ctx.fillText(`${stat.topSpeed} km/h`, topSpeedWidth + 110, y + 15);
+                ctx.fillText(`${stat.avgSpeed.toFixed(1)} avg`, avgSpeedWidth + 110, y + 42);
+            });
+        }
+
+        function renderSectorBattle(progress) {
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 18px Orbitron';
+            ctx.fillText('Sector 1 vs Sector 3 Battle', 20, 30);
+
+            const drivers = Object.keys(DRIVERS);
+            const maxLap = Math.ceil(progress * 27);
+
+            // Scatter plot
+            const chartLeft = 100;
+            const chartTop = 80;
+            const chartWidth = canvas.width - 150;
+            const chartHeight = canvas.height - 150;
+
+            // Axes
+            ctx.strokeStyle = '#444444';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(chartLeft, chartTop + chartHeight);
+            ctx.lineTo(chartLeft + chartWidth, chartTop + chartHeight);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(chartLeft, chartTop);
+            ctx.lineTo(chartLeft, chartTop + chartHeight);
+            ctx.stroke();
+
+            // Labels
+            ctx.fillStyle = '#888888';
+            ctx.font = '14px Rajdhani';
+            ctx.textAlign = 'center';
+            ctx.fillText('Sector 1 Time (s)', chartLeft + chartWidth / 2, canvas.height - 20);
+            ctx.save();
+            ctx.translate(30, chartTop + chartHeight / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('Sector 3 Time (s)', 0, 0);
+            ctx.restore();
+
+            // Plot points
+            drivers.forEach(driverNum => {
+                const driverLaps = RACE_DATA.laps.filter(l => l.num === driverNum && l.lap <= maxLap && l.flag === 'GF');
+
+                driverLaps.forEach(lap => {
+                    const x = chartLeft + ((lap.s1 - 26) / 2) * chartWidth;
+                    const y = chartTop + chartHeight - ((lap.s3 - 28) / 2) * chartHeight;
+
+                    ctx.beginPath();
+                    ctx.arc(x, y, 5, 0, Math.PI * 2);
+                    ctx.fillStyle = DRIVERS[driverNum].color + '66';
+                    ctx.fill();
+                });
+            });
+
+            // Legend
+            ctx.font = '12px Rajdhani';
+            ctx.textAlign = 'left';
+            drivers.forEach((driverNum, idx) => {
+                ctx.fillStyle = DRIVERS[driverNum].color;
+                ctx.fillText(`Car #${driverNum}`, canvas.width - 70, 80 + idx * 20);
+            });
+        }
+
+        function renderFlagPerformance(progress) {
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 18px Orbitron';
+            ctx.fillText('Green Flag vs FCY Performance', 20, 30);
+
+            const drivers = Object.keys(DRIVERS);
+            const maxLap = Math.ceil(progress * 27);
+
+            const barWidth = 80;
+            const spacing = (canvas.width - 100) / drivers.length;
+
+            drivers.forEach((driverNum, idx) => {
+                const x = 50 + idx * spacing;
+
+                const greenFlagLaps = RACE_DATA.laps.filter(l => l.num === driverNum && l.flag === 'GF' && l.lap <= maxLap);
+                const fcyLaps = RACE_DATA.laps.filter(l => l.num === driverNum && l.flag === 'FCY' && l.lap <= maxLap);
+
+                if (greenFlagLaps.length === 0 && fcyLaps.length === 0) return;
+
+                const avgGF = greenFlagLaps.length > 0
+                    ? greenFlagLaps.reduce((sum, l) => sum + l.time, 0) / greenFlagLaps.length
+                    : 0;
+                const avgFCY = fcyLaps.length > 0
+                    ? fcyLaps.reduce((sum, l) => sum + l.time, 0) / fcyLaps.length
+                    : 0;
+
+                // Green flag bar
+                if (avgGF > 0) {
+                    const gfHeight = ((avgGF - 95) / 10) * 200;
+                    ctx.fillStyle = DRIVERS[driverNum].color;
+                    ctx.fillRect(x, canvas.height - 100 - gfHeight, 35, gfHeight);
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = '12px Rajdhani';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(avgGF.toFixed(1), x + 17, canvas.height - 110 - gfHeight);
+                }
+
+                // FCY bar
+                if (avgFCY > 0) {
+                    const fcyHeight = ((avgFCY - 95) / 40) * 200;
+                    ctx.fillStyle = `${DRIVERS[driverNum].color}88`;
+                    ctx.fillRect(x + 40, canvas.height - 100 - fcyHeight, 35, fcyHeight);
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = '12px Rajdhani';
+                    ctx.fillText(avgFCY.toFixed(1), x + 57, canvas.height - 110 - fcyHeight);
+                }
+
+                // Driver label
+                ctx.fillStyle = DRIVERS[driverNum].color;
+                ctx.font = 'bold 14px Rajdhani';
+                ctx.fillText(`#${driverNum}`, x + 37, canvas.height - 70);
+            });
+
+            // Legend
+            ctx.fillStyle = '#00ff00';
+            ctx.fillRect(20, canvas.height - 50, 20, 20);
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '14px Rajdhani';
+            ctx.textAlign = 'left';
+            ctx.fillText('Green Flag', 45, canvas.height - 33);
+
+            ctx.fillStyle = '#ffff0088';
+            ctx.fillRect(150, canvas.height - 50, 20, 20);
+            ctx.fillText('FCY', 175, canvas.height - 33);
+        }
+
+        function renderImprovementTracker(progress) {
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 18px Orbitron';
+            ctx.fillText('Improvement Momentum Tracker', 20, 30);
+
+            const maxLap = Math.ceil(progress * 27);
+
+            // Timeline
+            const timelineY = canvas.height / 2;
+            ctx.strokeStyle = '#444444';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(50, timelineY);
+            ctx.lineTo(canvas.width - 50, timelineY);
+            ctx.stroke();
+
+            // Plot improvement moments
+            const drivers = Object.keys(DRIVERS);
+            drivers.forEach((driverNum, driverIdx) => {
+                const driverLaps = RACE_DATA.laps.filter(l => l.num === driverNum && l.lap <= maxLap);
+
+                driverLaps.forEach(lap => {
+                    if (lap.imp !== '0') {
+                        const x = 50 + ((lap.lap - 1) / 27) * (canvas.width - 100);
+                        const y = timelineY + (driverIdx - 2) * 40;
+
+                        // Star burst for improvement
+                        ctx.strokeStyle = DRIVERS[driverNum].color;
+                        ctx.lineWidth = 2;
+                        for (let i = 0; i < 8; i++) {
+                            const angle = (i / 8) * Math.PI * 2;
+                            ctx.beginPath();
+                            ctx.moveTo(x, y);
+                            ctx.lineTo(x + Math.cos(angle) * 15, y + Math.sin(angle) * 15);
+                            ctx.stroke();
+                        }
+
+                        ctx.fillStyle = DRIVERS[driverNum].color;
+                        ctx.font = '10px Rajdhani';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(`L${lap.lap}`, x, y + 30);
+                    }
+                });
+            });
+
+            // Driver legend
+            ctx.font = 'bold 14px Rajdhani';
+            ctx.textAlign = 'left';
+            drivers.forEach((driverNum, idx) => {
+                ctx.fillStyle = DRIVERS[driverNum].color;
+                ctx.fillText(`Car #${driverNum}`, 20, canvas.height - 80 + idx * 20);
+            });
+        }
+
+        function renderConsistencyBubbles(progress) {
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 18px Orbitron';
+            ctx.fillText('Consistency Score: Pace vs Variance', 20, 30);
+
+            const drivers = Object.keys(DRIVERS);
+            const maxLap = Math.ceil(progress * 27);
+
+            // Chart area
+            const chartLeft = 100;
+            const chartTop = 80;
+            const chartWidth = canvas.width - 150;
+            const chartHeight = canvas.height - 150;
+
+            // Axes
+            ctx.strokeStyle = '#444444';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(chartLeft, chartTop + chartHeight);
+            ctx.lineTo(chartLeft + chartWidth, chartTop + chartHeight);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(chartLeft, chartTop);
+            ctx.lineTo(chartLeft, chartTop + chartHeight);
+            ctx.stroke();
+
+            // Labels
+            ctx.fillStyle = '#888888';
+            ctx.font = '14px Rajdhani';
+            ctx.textAlign = 'center';
+            ctx.fillText('Average Lap Time (s)', chartLeft + chartWidth / 2, canvas.height - 20);
+            ctx.save();
+            ctx.translate(30, chartTop + chartHeight / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('Consistency (lower = better)', 0, 0);
+            ctx.restore();
+
+            // Plot bubbles
+            drivers.forEach(driverNum => {
+                const greenLaps = RACE_DATA.laps.filter(l => l.num === driverNum && l.flag === 'GF' && l.lap <= maxLap);
+                if (greenLaps.length < 2) return;
+
+                const avgTime = greenLaps.reduce((sum, l) => sum + l.time, 0) / greenLaps.length;
+                const variance = Math.sqrt(greenLaps.reduce((sum, l) => sum + Math.pow(l.time - avgTime, 2), 0) / greenLaps.length);
+
+                const x = chartLeft + ((avgTime - 97) / 3) * chartWidth;
+                const y = chartTop + chartHeight - (variance * 200);
+                const radius = 30;
+
+                // Bubble
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, Math.PI * 2);
+                ctx.fillStyle = DRIVERS[driverNum].color + '66';
+                ctx.fill();
+                ctx.strokeStyle = DRIVERS[driverNum].color;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Label
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 16px Rajdhani';
+                ctx.textAlign = 'center';
+                ctx.fillText(`#${driverNum}`, x, y + 5);
+            });
+
+            // Ideal zone
+            ctx.strokeStyle = '#00ff0044';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.strokeRect(chartLeft, chartTop, chartWidth / 2, chartHeight / 2);
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = '#00ff00';
+            ctx.font = '12px Rajdhani';
+            ctx.fillText('IDEAL ZONE', chartLeft + chartWidth / 4, chartTop + 20);
+        }
+
+        // Commentary generation with Poe API
+        async function generateCommentary(vizType, style, wildcardMods = null) {
+            const viz = visualizations[vizType];
+            if (!viz) return;
+
+            setStatus('loading', 'Generating AI Commentary...');
+
+            let prompt = `You are a race data commentator creating engaging, entertaining commentary for a unique visualization using REAL TOYOTA GR CUP RACE DATA from Barber Motorsports Park.
+
+Visualization: ${viz.name}
+Description: ${viz.description}
+Commentary Style: ${style}
+Drivers: #2, #3, #7, #13, #111
+Track: Barber Motorsports Park
+Laps: 27
+
+${wildcardMods ? `WILDCARD MODIFICATIONS: ${wildcardMods}` : ''}
+
+Create exactly 5 commentary segments that will be displayed in sync with the visualization animation. Each segment should be 2-3 sentences and engaging for the chosen style.
+
+Styles:
+- professional: Like a real race announcer, energetic and informative
+- comedian: Funny, witty, with racing puns and humor
+- dramatic: Over-the-top theatrical storytelling
+- technical: Deep technical analysis with data insights
+
+Return ONLY a JSON array with 5 objects, each having a "text" property. Example:
+[
+  {"text": "First segment here..."},
+  {"text": "Second segment here..."},
+  {"text": "Third segment here..."},
+  {"text": "Fourth segment here..."},
+  {"text": "Fifth segment here..."}
+]`;
+
+            try {
+                // Register handler for commentary response
+                window.Poe.registerHandler("commentary-handler", (result, context) => {
+                    const msg = result.responses[0];
+
+                    if (msg.status === "error") {
+                        setStatus('paused', 'Error generating commentary');
+                        console.error('Commentary generation error:', msg.statusText);
+                    } else if (msg.status === "complete") {
+                        try {
+                            // Extract JSON from response
+                            let jsonText = msg.content.trim();
+
+                            // Remove markdown code blocks if present
+                            jsonText = jsonText.replace(/```json\n?/g, '').replace(/```\n?/g, '');
+
+                            // Find JSON array in response
+                            const jsonMatch = jsonText.match(/\[[\s\S]*\]/);
+                            if (jsonMatch) {
+                                const commentary = JSON.parse(jsonMatch[0]);
+                                appState.commentary = commentary;
+
+                                // Enable playback
+                                playBtn.disabled = false;
+                                pauseBtn.disabled = false;
+
+                                setStatus('paused', 'Ready to Play');
+                                commentaryText.textContent = 'Press Play to begin your Race Data Karaoke experience!';
+                            } else {
+                                throw new Error('No JSON found in response');
+                            }
+                        } catch (error) {
+                            console.error('Error parsing commentary:', error);
+                            setStatus('paused', 'Commentary generated - using fallback');
+
+                            // Fallback commentary
+                            appState.commentary = [
+                                {text: `Welcome to ${viz.name} from Barber Motorsports Park!`},
+                                {text: msg.content.substring(0, 200) || "The data reveals fascinating patterns in race performance."},
+                                {text: "Notice how the visualization brings the numbers to life."},
+                                {text: "Each element represents a crucial aspect of racing dynamics."},
+                                {text: "This is just one way to see racing data in a whole new light!"}
+                            ];
+
+                            playBtn.disabled = false;
+                            pauseBtn.disabled = false;
+                        }
+                    }
+                });
+
+                // Send message to GPT-5.1
+                await window.Poe.sendUserMessage(`@GPT-5.1 ${prompt}`, {
+                    handler: "commentary-handler",
+                    stream: false,
+                    openChat: false
+                });
+
+            } catch (error) {
+                console.error('Error in commentary generation:', error);
+                setStatus('paused', 'Error - Using Demo Commentary');
+
+                // Fallback to demo commentary
+                appState.commentary = [
+                    {text: `Welcome to ${viz.name}! Real data from Barber Motorsports Park.`},
+                    {text: "Five drivers battled through 27 laps of intense competition."},
+                    {text: "Notice how each driver's unique racing style emerges from the data."},
+                    {text: "This visualization transforms complex telemetry into an intuitive story."},
+                    {text: "That's the power of creative data storytelling - making racing accessible to everyone!"}
+                ];
+
+                playBtn.disabled = false;
+                pauseBtn.disabled = false;
+            }
+        }
+
+        // Playback controls
+        function startPlayback() {
+            appState.isPlaying = true;
+            appState.currentSegment = 0;
+            playBtn.disabled = true;
+            pauseBtn.disabled = false;
+            setStatus('playing', 'Playing');
+
+            const totalDuration = 60000; // 60 seconds total
+            const segmentDuration = totalDuration / appState.commentary.length / appState.playbackSpeed;
+            let startTime = Date.now();
+            let currentFrame = 0;
+
+            // Display first commentary
+            if (appState.commentary[0]) {
+                commentaryText.textContent = appState.commentary[0].text;
+                commentaryText.classList.add('active');
+            }
+
+            // Animation loop
+            appState.animationInterval = setInterval(() => {
+                if (!appState.isPlaying) return;
+
+                const elapsed = (Date.now() - startTime) * appState.playbackSpeed;
+                const progress = Math.min(elapsed / totalDuration, 1);
+
+                renderVisualization(appState.currentViz, progress);
+                progressFill.style.width = `${progress * 100}%`;
+
+                // Check if we should move to next segment
+                const newSegment = Math.floor(progress * appState.commentary.length);
+                if (newSegment !== appState.currentSegment && newSegment < appState.commentary.length) {
+                    appState.currentSegment = newSegment;
+                    commentaryText.classList.remove('active');
+                    setTimeout(() => {
+                        commentaryText.textContent = appState.commentary[appState.currentSegment].text;
+                        commentaryText.classList.add('active');
+                    }, 100);
+                }
+
+                // Check if playback complete
+                if (progress >= 1) {
+                    stopPlayback();
+                }
+            }, 1000 / 60); // 60 FPS
+        }
+
+        function pausePlayback() {
+            appState.isPlaying = false;
+            playBtn.disabled = false;
+            pauseBtn.disabled = true;
+            setStatus('paused', 'Paused');
+
+            if (appState.animationInterval) {
+                clearInterval(appState.animationInterval);
+            }
+        }
+
+        function stopPlayback() {
+            appState.isPlaying = false;
+            playBtn.disabled = false;
+            pauseBtn.disabled = false;
+            setStatus('paused', 'Complete');
+
+            if (appState.animationInterval) {
+                clearInterval(appState.animationInterval);
+            }
+
+            progressFill.style.width = '100%';
+        }
+
+        function setStatus(type, message) {
+            const badges = {
+                'playing': `<span class="status-badge playing">▶️ ${message}</span>`,
+                'paused': `<span class="status-badge paused">⏸️ ${message}</span>`,
+                'loading': `<span class="status-badge loading">${message}<span class="loading-spinner"></span></span>`
+            };
+            statusArea.innerHTML = badges[type] || '';
+        }
+
+        // Show educational preview modal
+        function showPreviewModal(vizType, styleType) {
+            const viz = visualizations[vizType];
+            if (!viz || !viz.educational) return;
+
+            const edu = viz.educational;
+
+            let html = `
+                <h3>${viz.name}</h3>
+                <p>${edu.summary}</p>
+
+                <div class="key-features">
+                    <h4 style="font-family: 'Orbitron', sans-serif; color: var(--accent); margin-bottom: 10px;">What to Look For:</h4>
+                    <ul>
+                        ${edu.whatToLookFor.map(item => `<li>${item}</li>`).join('')}
+                    </ul>
+                </div>
+
+                <div style="background: rgba(235, 10, 30, 0.1); border-left: 4px solid var(--primary); padding: 15px; margin-top: 15px; border-radius: 8px;">
+                    <h4 style="font-family: 'Orbitron', sans-serif; color: var(--primary); margin-bottom: 8px; font-size: 0.9rem;">Why It Matters</h4>
+                    <p style="margin: 0; line-height: 1.6; color: #dddddd;">${edu.whyItMatters}</p>
+                </div>
+
+                <div id="scriptPreviewArea"></div>
+            `;
+
+            previewContent.innerHTML = html;
+            previewModal.classList.add('active');
+        }
+
+        // Generate and display script preview
+        async function generateScriptPreview(vizType, styleType) {
+            const scriptArea = document.getElementById('scriptPreviewArea');
+            scriptArea.innerHTML = `
+                <div class="script-preview">
+                    <h4>📜 Generating Commentary Preview...</h4>
+                    <div style="text-align: center; padding: 20px;">
+                        <div class="loading-spinner"></div>
+                    </div>
+                </div>
+            `;
+
+            const viz = visualizations[vizType];
+            let prompt = `You are a race data commentator. Create exactly 5 SHORT commentary segments (1-2 sentences each) for this visualization:
+
+Visualization: ${viz.name}
+Style: ${styleType}
+Data: Toyota GR Cup race at Barber Motorsports Park, drivers #2, #3, #7, #13, #111, 27 laps
+
+Return ONLY a JSON array with 5 objects with "text" property:
+[
+  {"text": "First segment..."},
+  {"text": "Second segment..."},
+  {"text": "Third segment..."},
+  {"text": "Fourth segment..."},
+  {"text": "Fifth segment..."}
+]`;
+
+            try {
+                let scriptSegments = [];
+
+                window.Poe.registerHandler("preview-handler", (result) => {
+                    const msg = result.responses[0];
+                    if (msg.status === "complete") {
+                        try {
+                            let jsonText = msg.content.trim();
+                            jsonText = jsonText.replace(/```json\n?/g, '').replace(/```\n?/g, '');
+                            const jsonMatch = jsonText.match(/\[[\s\S]*\]/);
+                            if (jsonMatch) {
+                                scriptSegments = JSON.parse(jsonMatch[0]);
+                                displayScriptPreview(scriptSegments);
+                            }
+                        } catch (error) {
+                            console.error('Error parsing preview:', error);
+                            scriptArea.innerHTML = '<p style="color: #ff8888;">Preview generation failed, but you can still proceed!</p>';
+                        }
+                    }
+                });
+
+                await window.Poe.sendUserMessage(`@GPT-5.1 ${prompt}`, {
+                    handler: "preview-handler",
+                    stream: false,
+                    openChat: false
+                });
+            } catch (error) {
+                console.error('Preview error:', error);
+                scriptArea.innerHTML = '<p style="color: #ff8888;">Preview unavailable, but you can still proceed!</p>';
+            }
+        }
+
+        function displayScriptPreview(segments) {
+            const scriptArea = document.getElementById('scriptPreviewArea');
+            const segmentsHTML = segments.map((seg, idx) => `
+                <div class="script-segment">
+                    <div class="script-segment-number">Segment ${idx + 1}</div>
+                    <div class="script-segment-text">${seg.text}</div>
+                </div>
+            `).join('');
+
+            scriptArea.innerHTML = `
+                <div class="script-preview">
+                    <h4>📜 Commentary Preview</h4>
+                    ${segmentsHTML}
+                    <p style="margin-top: 15px; font-size: 0.9rem; opacity: 0.8;">This is what the teleprompter will display as the visualization animates!</p>
+                </div>
+            `;
+        }
+
+        // Event listeners
+        generateBtn.addEventListener('click', async () => {
+            let vizType = vizSelect.value;
+            let styleType = styleSelect.value;
+
+            // Handle random selections
+            if (vizType === 'random') {
+                const types = Object.keys(visualizations);
+                vizType = types[Math.floor(Math.random() * types.length)];
+            }
+
+            if (styleType === 'random') {
+                const styles = ['professional', 'comedian', 'dramatic', 'technical'];
+                styleType = styles[Math.floor(Math.random() * styles.length)];
+            }
+
+            // Store selections temporarily
+            window.pendingViz = { vizType, styleType };
+
+            // Show educational preview
+            showPreviewModal(vizType, styleType);
+
+            // Generate script preview
+            await generateScriptPreview(vizType, styleType);
+        });
+
+        playBtn.addEventListener('click', () => {
+            if (!appState.isPlaying && appState.commentary.length > 0) {
+                startPlayback();
+            }
+        });
+
+        pauseBtn.addEventListener('click', () => {
+            if (appState.isPlaying) {
+                pausePlayback();
+            }
+        });
+
+        speedSlider.addEventListener('input', (e) => {
+            appState.playbackSpeed = parseFloat(e.target.value);
+            speedValue.textContent = `${appState.playbackSpeed.toFixed(1)}x`;
+        });
+
+        resetBtn.addEventListener('click', () => {
+            if (appState.isPlaying) {
+                pausePlayback();
+            }
+
+            appState.currentSegment = 0;
+            progressFill.style.width = '0%';
+            commentaryText.textContent = 'Select a visualization and commentary style above, then click "Generate Experience" to begin exploring real Toyota GR Cup race data from Barber Motorsports Park!';
+            setStatus('paused', 'Reset');
+
+            if (appState.currentViz) {
+                renderVisualization(appState.currentViz, 0);
+            }
+        });
+
+        // Wildcard modal - removed from main UI but still accessible via preview modal
+        // wildcardBtn.addEventListener('click', () => {
+        //     if (!appState.currentViz) {
+        //         showCustomDialog('Please generate an experience first before using Wildcard Challenge!');
+        //         return;
+        //     }
+        //     wildcardModal.classList.add('active');
+        // });
+
+        closeModalBtn.addEventListener('click', () => {
+            wildcardModal.classList.remove('active');
+        });
+
+        // Preview modal buttons
+        startVisualizationBtn.addEventListener('click', async () => {
+            previewModal.classList.remove('active');
+
+            const { vizType, styleType } = window.pendingViz;
+
+            appState.currentViz = vizType;
+            appState.currentStyle = styleType;
+            appState.currentSegment = 0;
+            appState.wildcardModifications = null;
+
+            // Reset playback
+            if (appState.isPlaying) {
+                pausePlayback();
+            }
+
+            playBtn.disabled = true;
+            pauseBtn.disabled = true;
+            progressFill.style.width = '0%';
+
+            // Render initial frame
+            renderVisualization(vizType, 0);
+
+            // Generate commentary
+            await generateCommentary(vizType, styleType);
+        });
+
+        closePreviewBtn.addEventListener('click', () => {
+            previewModal.classList.remove('active');
+        });
+
+        openLearningModeBtn.addEventListener('click', () => {
+            toggleLearningPanel(true);
+        });
+
+        // Main learning mode button
+        document.getElementById('mainLearningBtn').addEventListener('click', () => {
+            toggleLearningPanel(true);
+        });
+
+        // Learning panel close
+        closeLearningPanel.addEventListener('click', () => {
+            toggleLearningPanel(false);
+        });
+
+        sendLearningBtn.addEventListener('click', () => {
+            askLearningQuestion();
+        });
+
+        learningChatInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                askLearningQuestion();
+            }
+        });
+
+        async function askLearningQuestion() {
+            const question = learningChatInput.value.trim();
+            if (!question) return;
+
+            // Add user message
+            const userMsg = document.createElement('div');
+            userMsg.className = 'chat-message user';
+            userMsg.innerHTML = `
+                <div class="sender">You</div>
+                <div><p>${question}</p></div>
+            `;
+            learningChatArea.appendChild(userMsg);
+            learningChatArea.scrollTop = learningChatArea.scrollHeight;
+
+            // Clear input
+            learningChatInput.value = '';
+
+            // Add loading message
+            const loadingMsg = document.createElement('div');
+            loadingMsg.className = 'chat-message ai loading';
+            loadingMsg.id = 'learning-loading-msg';
+            loadingMsg.innerHTML = `
+                <div class="sender">AI Learning Assistant</div>
+                <div><p class="typing-indicator">Thinking...</p></div>
+            `;
+            learningChatArea.appendChild(loadingMsg);
+            learningChatArea.scrollTop = learningChatArea.scrollHeight;
+
+            // Get current viz context
+            const vizContext = window.pendingViz || appState;
+            const vizInfo = vizContext.currentViz ? visualizations[vizContext.currentViz] : null;
+
+            const contextInfo = vizInfo ? `
+Current visualization: ${vizInfo.name}
+Description: ${vizInfo.description}
+` : '';
+
+            const prompt = `You are a friendly racing data education assistant helping someone understand motorsports data analysis.
+
+${contextInfo}
+Race Data Context:
+- Event: Toyota GR Cup at Barber Motorsports Park
+- Drivers: #2, #3, #7, #13, #111
+- Total Laps: 27
+- Track sectors: S1, S2, S3
+- Conditions: Green Flag (racing) and FCY (Full Course Yellow/caution)
+
+User question: ${question}
+
+Provide a clear, educational answer that helps them understand the data and racing concepts. Use examples from the race data when relevant. Keep it conversational and engaging.`;
+
+            try {
+                window.Poe.registerHandler("learning-handler", (result) => {
+                    const msg = result.responses[0];
+
+                    if (msg.status === "error") {
+                        document.getElementById('learning-loading-msg')?.remove();
+                        const errorMsg = document.createElement('div');
+                        errorMsg.className = 'chat-message ai';
+                        errorMsg.innerHTML = `
+                            <div class="sender">AI Learning Assistant</div>
+                            <div><p style="color: #ff8888;">Sorry, I encountered an error. Please try again!</p></div>
+                        `;
+                        learningChatArea.appendChild(errorMsg);
+                        learningChatArea.scrollTop = learningChatArea.scrollHeight;
+                    } else if (msg.status === "complete") {
+                        document.getElementById('learning-loading-msg')?.remove();
+                        const aiMsg = document.createElement('div');
+                        aiMsg.className = 'chat-message ai';
+                        aiMsg.innerHTML = `
+                            <div class="sender">AI Learning Assistant</div>
+                            <div>${marked.parse(msg.content)}</div>
+                        `;
+                        learningChatArea.appendChild(aiMsg);
+                        learningChatArea.scrollTop = learningChatArea.scrollHeight;
+                    }
+                });
+
+                await window.Poe.sendUserMessage(`@GPT-5.1 ${prompt}`, {
+                    handler: "learning-handler",
+                    stream: false,
+                    openChat: false
+                });
+            } catch (error) {
+                console.error('Learning error:', error);
+                document.getElementById('learning-loading-msg')?.remove();
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'chat-message ai';
+                errorMsg.innerHTML = `
+                    <div class="sender">AI Learning Assistant</div>
+                    <div><p style="color: #ff8888;">Sorry, something went wrong. Please try again!</p></div>
+                `;
+                learningChatArea.appendChild(errorMsg);
+                learningChatArea.scrollTop = learningChatArea.scrollHeight;
+            }
+        }
+
+        // Quick suggestions
+        document.querySelectorAll('.suggestion-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (btn.dataset.suggestion) {
+                    wildcardInput.value = btn.dataset.suggestion;
+                } else if (btn.dataset.learningQ) {
+                    learningChatInput.value = btn.dataset.learningQ;
+                    askLearningQuestion();
+                }
+            });
+        });
+
+        sendWildcardBtn.addEventListener('click', async () => {
+            const input = wildcardInput.value.trim();
+            if (!input) return;
+
+            // Add user message to chat
+            addChatMessage('user', input);
+            wildcardInput.value = '';
+            sendWildcardBtn.disabled = true;
+
+            try {
+                // Register handler for wildcard response
+                window.Poe.registerHandler("wildcard-handler", (result, context) => {
+                    const msg = result.responses[0];
+
+                    if (msg.status === "error") {
+                        addChatMessage('ai', 'Sorry, I encountered an error processing your request. Please try again!');
+                        sendWildcardBtn.disabled = false;
+                    } else if (msg.status === "complete") {
+                        addChatMessage('ai', msg.content);
+                        appState.wildcardModifications = input;
+                        applyWildcardBtn.disabled = false;
+                        sendWildcardBtn.disabled = false;
+                    }
+                });
+
+                // Send wildcard modification request
+                const prompt = `The user wants to modify their race data visualization experience. Current visualization: ${visualizations[appState.currentViz].name}. Current style: ${appState.currentStyle}.
+
+User's wildcard request: "${input}"
+
+Acknowledge their creative idea and briefly explain how you'll apply it to the visualization and commentary (1-2 sentences). Be enthusiastic and playful!`;
+
+                await window.Poe.sendUserMessage(`@GPT-5.1 ${prompt}`, {
+                    handler: "wildcard-handler",
+                    stream: false,
+                    openChat: false
+                });
+
+            } catch (error) {
+                addChatMessage('ai', 'Oops! Something went wrong. But I love your creative idea - try clicking "Apply Changes" anyway!');
+                appState.wildcardModifications = input;
+                applyWildcardBtn.disabled = false;
+                sendWildcardBtn.disabled = false;
+            }
+        });
+
+        applyWildcardBtn.addEventListener('click', async () => {
+            wildcardModal.classList.remove('active');
+
+            // Regenerate with wildcard modifications
+            if (appState.isPlaying) {
+                pausePlayback();
+            }
+
+            playBtn.disabled = true;
+            pauseBtn.disabled = true;
+            applyWildcardBtn.disabled = true;
+
+            await generateCommentary(appState.currentViz, appState.currentStyle, appState.wildcardModifications);
+        });
+
+        resetWildcardBtn.addEventListener('click', async () => {
+            appState.wildcardModifications = null;
+            wildcardModal.classList.remove('active');
+
+            if (appState.isPlaying) {
+                pausePlayback();
+            }
+
+            playBtn.disabled = true;
+            pauseBtn.disabled = true;
+
+            await generateCommentary(appState.currentViz, appState.currentStyle);
+        });
+
+        function addChatMessage(sender, text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${sender}`;
+            messageDiv.innerHTML = `
+                <div class="sender">${sender === 'user' ? 'You' : 'AI Assistant'}</div>
+                <div>${text}</div>
+            `;
+            chatArea.appendChild(messageDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        // Custom dialog function (replacing alert/confirm)
+        function showCustomDialog(message) {
+            const dialog = document.createElement('div');
+            dialog.className = 'modal active';
+            dialog.innerHTML = `
+                <div class="modal-content" style="max-width: 400px;">
+                    <div class="modal-header">Notice</div>
+                    <p style="margin-bottom: 20px;">${message}</p>
+                    <button class="btn-primary" onclick="this.closest('.modal').remove()"><span>OK</span></button>
+                </div>
+            `;
+            document.body.appendChild(dialog);
+        }
+
+        // Enter key support for wildcard input
+        wildcardInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendWildcardBtn.click();
+            }
+        });
+
+        // Initial render
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.font = 'bold 24px Orbitron';
+        ctx.textAlign = 'center';
+        ctx.fillText('Select a visualization to explore real race data', canvas.width / 2, canvas.height / 2 - 20);
+        ctx.font = '16px Rajdhani';
+        ctx.fillText('Barber Motorsports Park • Toyota GR Cup • 5 Drivers • 27 Laps', canvas.width / 2, canvas.height / 2 + 20);
+
+        // ===== SPLASH SCREEN & FILE UPLOAD FUNCTIONALITY =====
+
+        const splashScreen = document.getElementById('splashScreen');
+        const startDemoBtn = document.getElementById('startDemoBtn');
+        const uploadCustomBtn = document.getElementById('uploadCustomBtn');
+        const helpBtn = document.getElementById('helpBtn');
+        const fileInput = document.getElementById('fileInput');
+
+        // Track current data source
+        let currentDataSource = 'Demo Data: Barber Motorsports Park';
+
+        // Start with Demo Data button - dismiss splash screen
+        startDemoBtn.addEventListener('click', () => {
+            splashScreen.classList.remove('active');
+        });
+
+        // Upload Custom Data button - trigger file input
+        uploadCustomBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // Help button - show splash screen again
+        helpBtn.addEventListener('click', () => {
+            splashScreen.classList.add('active');
+        });
+
+        // File input change handler - process uploaded .tar file
+        fileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Check file size (50MB limit)
+            const maxSize = 50 * 1024 * 1024; // 50MB in bytes
+            if (file.size > maxSize) {
+                showErrorDialog(
+                    'File Too Large',
+                    `Your file is ${(file.size / 1024 / 1024).toFixed(1)}MB, which exceeds the 50MB limit.<br><br>` +
+                    `<strong>Tip:</strong> Remove telemetry data from your .tar archive to reduce the file size. ` +
+                    `Lap times, sector splits, and weather data are usually sufficient for visualizations.`
+                );
+                fileInput.value = ''; // Reset input
+                return;
+            }
+
+            // Check file type
+            if (!file.name.endsWith('.tar')) {
+                showErrorDialog(
+                    'Invalid File Type',
+                    'Please upload a .tar file containing race data.'
+                );
+                fileInput.value = '';
+                return;
+            }
+
+            // Close splash screen and show loading state
+            splashScreen.classList.remove('active');
+            setStatus('loading', 'Analyzing your race data...');
+            commentaryText.textContent = 'App-Creator is analyzing your data and generating custom visualizations...';
+
+            // Disable controls during processing
+            generateBtn.disabled = true;
+            // wildcardBtn.disabled = true; // Removed button
+
+            try {
+                // Register handler for App-Creator response
+                window.Poe.registerHandler("app-creator-handler", async (result, context) => {
+                    const msg = result.responses[0];
+
+                    if (msg.status === "error") {
+                        showErrorDialog(
+                            'Data Processing Error',
+                            'App-Creator encountered an error processing your data file. Please verify the file contains valid race data in CSV format.'
+                        );
+                        setStatus('paused', 'Upload Failed');
+                        commentaryText.textContent = 'Select a visualization and commentary style above, then click "Generate Experience" to begin!';
+                        generateBtn.disabled = false;
+                        // wildcardBtn.disabled = false; // Removed button
+                        fileInput.value = '';
+                    } else if (msg.status === "complete") {
+                        try {
+                            // Parse App-Creator response to extract visualizations and data
+                            const response = msg.content;
+
+                            // Look for indication of compatibility
+                            const isCompatible = response.toLowerCase().includes('compatible') ||
+                                                response.toLowerCase().includes('matches');
+
+                            if (isCompatible && !response.toLowerCase().includes('not compatible')) {
+                                // Data is compatible with existing visualizations
+                                showSuccessDialog(
+                                    'Data Loaded Successfully!',
+                                    `Your race data is compatible with the default visualizations. ` +
+                                    `The current visualizations will now use your custom data instead of demo data.`
+                                );
+
+                                currentDataSource = `Custom Data: ${file.name}`;
+                                updateDataSourceIndicator();
+
+                                setStatus('paused', 'Ready - Custom Data Loaded');
+                                commentaryText.textContent = 'Custom data loaded! Select a visualization and click "Generate Experience" to explore your race data.';
+
+                            } else {
+                                // App-Creator generated new visualizations
+                                // Extract visualization code from response
+                                const codeBlocks = extractCodeBlocks(response);
+
+                                if (codeBlocks.length > 0) {
+                                    // Apply new visualization code
+                                    await applyCustomVisualizations(codeBlocks);
+
+                                    currentDataSource = `Custom Data: ${file.name}`;
+                                    updateDataSourceIndicator();
+
+                                    showSuccessDialog(
+                                        'Custom Visualizations Generated!',
+                                        `App-Creator has generated ${codeBlocks.length} custom visualization(s) ` +
+                                        `tailored to your race data. Explore them using the dropdown above!`
+                                    );
+
+                                    setStatus('paused', 'Ready - Custom Visualizations Loaded');
+                                    commentaryText.textContent = 'Custom visualizations generated! Select one and click "Generate Experience" to begin.';
+                                } else {
+                                    // Fallback if no code blocks found
+                                    showErrorDialog(
+                                        'Unexpected Response',
+                                        'App-Creator analyzed your data but did not return visualization code. Using demo visualizations with your data.'
+                                    );
+
+                                    currentDataSource = `Custom Data: ${file.name}`;
+                                    updateDataSourceIndicator();
+                                    setStatus('paused', 'Ready - Using Demo Visualizations');
+                                }
+                            }
+
+                            generateBtn.disabled = false;
+                            // wildcardBtn.disabled = false; // Removed button
+
+                        } catch (error) {
+                            console.error('Error processing App-Creator response:', error);
+                            showErrorDialog(
+                                'Processing Error',
+                                'An error occurred while processing the App-Creator response. Please try again or reload the page to use demo data.'
+                            );
+                            setStatus('paused', 'Processing Error');
+                            generateBtn.disabled = false;
+                            // wildcardBtn.disabled = false; // Removed button
+                            fileInput.value = '';
+                        }
+                    }
+                });
+
+                // Create a File object to send as attachment
+                const formData = new FormData();
+                formData.append('file', file);
+
+                // Send file to App-Creator
+                await window.Poe.sendUserMessage(
+                    `@App-Creator Please analyze this race data .tar file and determine if it's compatible with these visualizations:\n\n` +
+                    `1. Sector Consistency Heatmap - Shows sector time consistency across all laps\n` +
+                    `2. Pace Degradation Timeline - Tracks lap times throughout race\n` +
+                    `3. Weather Impact Analysis - Correlates weather with performance\n` +
+                    `4. Speed Trap Hierarchy - Compares top speeds across drivers\n` +
+                    `5. Sector 1 vs Sector 3 Battle - Driving style comparison\n` +
+                    `6. Green Flag vs FCY Performance - Performance under different conditions\n` +
+                    `7. Improvement Momentum Tracker - Highlights when drivers find time\n` +
+                    `8. Consistency Score Bubbles - Average pace vs consistency\n\n` +
+                    `If the data matches these visualizations, respond with "COMPATIBLE" and explain what data fields you found.\n\n` +
+                    `If the data requires different visualizations, generate NEW visualization code as JavaScript functions following the same pattern as the existing code. ` +
+                    `Include render functions like renderVisualization1(progress), renderVisualization2(progress), etc. ` +
+                    `Also provide a list of visualization metadata objects with name and description fields.\n\n` +
+                    `The race data should contain lap times, sector splits, or similar telemetry.`,
+                    {
+                        handler: "app-creator-handler",
+                        stream: false,
+                        openChat: false,
+                        attachments: [file]
+                    }
+                );
+
+            } catch (error) {
+                console.error('Error sending file to App-Creator:', error);
+
+                let errorMessage = 'An error occurred while uploading your file.';
+                if (error.errorType === 'USER_REJECTED_CONFIRMATION') {
+                    errorMessage = 'File upload was cancelled. You need to accept the confirmation to upload custom data.';
+                } else if (error.errorType === 'INVALID_INPUT') {
+                    errorMessage = 'The file could not be uploaded. Please check the file format and try again.';
+                }
+
+                showErrorDialog('Upload Error', errorMessage);
+                setStatus('paused', 'Upload Cancelled');
+                commentaryText.textContent = 'Select a visualization and commentary style above, then click "Generate Experience" to begin!';
+                generateBtn.disabled = false;
+                // wildcardBtn.disabled = false; // Removed button
+                fileInput.value = '';
+            }
+        });
+
+        // Helper function to extract code blocks from App-Creator response
+        function extractCodeBlocks(text) {
+            const codeBlocks = [];
+            const codeBlockRegex = /```(?:javascript|js)?\n([\s\S]*?)```/g;
+            let match;
+
+            while ((match = codeBlockRegex.exec(text)) !== null) {
+                codeBlocks.push(match[1].trim());
+            }
+
+            return codeBlocks;
+        }
+
+        // Helper function to apply custom visualizations
+        async function applyCustomVisualizations(codeBlocks) {
+            // Note: In a real implementation, this would evaluate the code and
+            // update the visualizations object and render functions.
+            // For security, we're showing a simpler approach here.
+
+            // This is a placeholder - in production, you'd need to safely evaluate
+            // the visualization code provided by App-Creator
+            console.log('Custom visualization code received:', codeBlocks);
+
+            // Update the visualization selector with new options
+            // (This would be implemented based on the actual structure of App-Creator's response)
+        }
+
+        // Helper function to update data source indicator
+        function updateDataSourceIndicator() {
+            const demoBadge = document.querySelector('.demo-badge');
+            if (demoBadge) {
+                demoBadge.textContent = currentDataSource.split(': ')[0];
+                demoBadge.title = currentDataSource;
+            }
+
+            const subtitle = document.querySelector('.subtitle');
+            if (subtitle && currentDataSource.startsWith('Custom')) {
+                subtitle.textContent = currentDataSource;
+            }
+        }
+
+        // Custom error dialog (replaces alert)
+        function showErrorDialog(title, message) {
+            const dialog = document.createElement('div');
+            dialog.className = 'modal active';
+            dialog.innerHTML = `
+                <div class="modal-content" style="max-width: 500px;">
+                    <div class="modal-header" style="color: #ff4444;">⚠️ ${title}</div>
+                    <p style="margin-bottom: 20px; line-height: 1.6;">${message}</p>
+                    <button class="btn-primary" onclick="this.closest('.modal').remove()"><span>OK</span></button>
+                </div>
+            `;
+            document.body.appendChild(dialog);
+        }
+
+        // Custom success dialog
+        function showSuccessDialog(title, message) {
+            const dialog = document.createElement('div');
+            dialog.className = 'modal active';
+            dialog.innerHTML = `
+                <div class="modal-content" style="max-width: 500px;">
+                    <div class="modal-header" style="color: #00ff00;">✅ ${title}</div>
+                    <p style="margin-bottom: 20px; line-height: 1.6;">${message}</p>
+                    <button class="btn-primary" onclick="this.closest('.modal').remove()"><span>OK</span></button>
+                </div>
+            `;
+            document.body.appendChild(dialog);
+        }
+    </script>
+</body>
+</html>
+
